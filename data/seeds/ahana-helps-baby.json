@@ -1,0 +1,27 @@
+{
+  "bookId": "seed-ahana-baby",
+  "title": "Ahana Helps With Baby Shreya",
+  "language": "en",
+  "characters": [
+    {
+      "name": "Ahana",
+      "age": 4,
+      "home": "Ulm, Germany",
+      "family": ["Papa", "baby sister Shreya"],
+      "traits": ["curious", "kind", "gentle helper"],
+      "visualStyle": "soft watercolor, warm light, cozy sweaters"
+    }
+  ],
+  "pages": [
+    {
+      "pageNo": 1,
+      "text": "In the quiet evening, Ahana noticed Papa humming while he warmed milk for Shreya. She tiptoed closer, hugging her plush bunny and listening to the tiny hiccups coming from the bassinet.",
+      "imagePrompt": "Ahana offering a soft cloth to Papa beside Shreya's cradle",
+      "imageUrl": "/generated/seed-ahana-baby/p1.svg",
+      "audioUrl": "/generated/seed-ahana-baby/p1.mp3"
+    }
+  ],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "moral": "Small helpers make big differences."
+}

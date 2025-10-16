@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.env
+*.log
+pnpm-lock.yaml
+public/generated/*.pdf
+public/generated/*.png
+public/generated/*.svg
+public/generated/*.mp3
