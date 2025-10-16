@@ -1,0 +1,15 @@
+{
+  "title": "Ahana im Regen-Museum",
+  "language": "de",
+  "outline": {
+    "moral": "Neugierde leuchtet auch an grauen Tagen.",
+    "pages": [
+      { "pageNo": 1, "beat_title": "Ankunft", "summary": "Ahana und Papa fliehen vor Regen ins Museum." },
+      { "pageNo": 2, "beat_title": "Begrüßung", "summary": "Eine freundliche Führerin überreicht bunte Regencapes." },
+      { "pageNo": 3, "beat_title": "Experiment", "summary": "Ahana lässt Tropfen auf einem Klangschirm tanzen." },
+      { "pageNo": 4, "beat_title": "Überraschung", "summary": "Shreya kichert beim warmen Nebel in der Tropfhalle." },
+      { "pageNo": 5, "beat_title": "Ruhepause", "summary": "Alle trinken warmen Kakao zwischen leuchtenden Regenschirmen." },
+      { "pageNo": 6, "beat_title": "Abschluss", "summary": "Der Regen hört auf, doch Ahana möchte bald zurück." }
+    ]
+  }
+}
