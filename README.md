@@ -28,6 +28,9 @@ See /types/book.ts.
 🔌 API (local stubs)
 POST /api/outline • POST /api/page • POST /api/image • POST /api/tts • POST /api/export
 
+📘 Product Overview
+See [`docs/product_overview.md`](docs/product_overview.md) for a shareable, narrative summary you can pass along to teammates or friends.
+
 👧 Default Character: Ahana
 Age ~4–5 (born 19 Apr 2021), Ulm (Germany), baby sister Shreya, Papa. Traits: curious, kind, gentle helper. Sidekick: plush bunny. Visuals: soft watercolor, warm light, simple non-derivative outfits.
 
