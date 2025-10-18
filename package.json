@@ -10,7 +10,8 @@
     "test": "vitest",
     "format": "prettier --write .",
     "coverage": "node scripts/run-coverage.mjs",
-    "build:all": "bash ./scripts/build-all.sh"
+    "build:all": "bash ./scripts/build-all.sh",
+    "build:all:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-all.ps1"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.8",
