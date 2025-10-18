@@ -21,7 +21,8 @@ export default async function ReaderPage({ params }: { params: { bookId: string 
   async function exportPdf(pdfBase64: string) {
     "use server";
     const filePath = getPublicAssetPath(book!.bookId, "book.pdf");
-    await fs.writeFile(filePath, Buffer.from(pdfBase64, "base64"));
+    const pdfBytes = Uint8Array.from(Buffer.from(pdfBase64, "base64"));
+    await fs.writeFile(filePath, pdfBytes);
     return getPublicAssetUrl(book!.bookId, "book.pdf");
   }
 

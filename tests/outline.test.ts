@@ -23,4 +23,36 @@ describe("outline", () => {
     expect(outline.title.length).toBeGreaterThan(0);
     expect(outline.pages).toHaveLength(6);
   });
+
+  it("returns deterministic results for identical input", async () => {
+    const input = {
+      name: "Ahana",
+      age: 5,
+      tone: "calm",
+      language: "en" as const,
+      characterCard: CHARACTER,
+      storyIdea: "gentle museum visit"
+    };
+
+    const [outlineA, outlineB] = await Promise.all([
+      generateOutline(input),
+      generateOutline(input)
+    ]);
+
+    expect(outlineA).toEqual(outlineB);
+  });
+
+  it("uses a provided story idea when supplied", async () => {
+    const outline = await generateOutline({
+      name: "Ahana",
+      age: 5,
+      tone: "calm",
+      language: "en",
+      characterCard: CHARACTER,
+      storyIdea: "   visit to the city library   "
+    });
+
+    expect(outline.title).toBe("Ahana and the Visit to the city library");
+    expect(outline.pages.every((page) => page.summary.includes("visit to the city library"))).toBe(true);
+  });
 });

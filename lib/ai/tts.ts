@@ -15,7 +15,8 @@ const SILENT_MP3_BASE64 =
 export async function synthesize({ filePath }: TTSArgs): Promise<string> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   const buffer = Buffer.from(SILENT_MP3_BASE64, "base64");
-  await fs.writeFile(filePath, buffer);
+  const audioBytes = Uint8Array.from(buffer);
+  await fs.writeFile(filePath, audioBytes);
   return filePath;
 }
 

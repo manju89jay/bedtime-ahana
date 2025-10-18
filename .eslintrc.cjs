@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["next", "next/core-web-vitals", "prettier"],
+  extends: ["next", "next/core-web-vitals"],
   parserOptions: {
     project: ["./tsconfig.json"]
   },
