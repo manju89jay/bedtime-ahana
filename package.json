@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "coverage": "node scripts/run-coverage.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.8",
