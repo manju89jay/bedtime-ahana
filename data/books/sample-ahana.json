@@ -1,0 +1,70 @@
+{
+  "bookId": "sample-ahana",
+  "title": "Ahana and the Helping baby sister Shreya with bedtime",
+  "language": "en",
+  "characters": [
+    {
+      "name": "Ahana",
+      "age": 4,
+      "home": "Ulm, Germany",
+      "family": [
+        "Papa",
+        "Baby sister Shreya"
+      ],
+      "traits": [
+        "curious",
+        "kind",
+        "gentle helper"
+      ],
+      "sidekick": "plush bunny",
+      "visualStyle": "soft watercolor, warm light, comfy jumper"
+    }
+  ],
+  "pages": [
+    {
+      "pageNo": 1,
+      "text": "Soft lamp light followed as Ahana hugged ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. promising tomorrow would feel familiar. Soft lamp light followed as Ahana whispered ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. and everyone agreed the moment was just right. In the quiet evening, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. promising tomorrow would feel familiar. As the sky glowed amber, Ahana whispered ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. so even Shreya felt the hush of bedtime. Inside the echoing hall, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. so even Shreya felt the hush of bedtime. Under Papa's gentle smile, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. promising tomorrow would feel familiar. As the sky glowed amber, Ahana whispered ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. and the room settled into calm twinkles. Soft lamp light followed as Ahana noticed ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. promising tomorrow would feel familiar.",
+      "imagePrompt": "One illustration prompt for page 1.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with plush bunny tucked under arm.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p1.svg",
+      "audioUrl": "/generated/sample-ahana/p1.mp3"
+    },
+    {
+      "pageNo": 2,
+      "text": "Soft lamp light followed as Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. promising tomorrow would feel familiar. Beside the friendly guide, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. gathering tiny memories like polished stones. Inside the echoing hall, Ahana reached ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. making the air smell of cinnamon courage. As the sky glowed amber, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. gathering tiny memories like polished stones. In the quiet evening, Ahana reached ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. gathering tiny memories like polished stones. Soft lamp light followed as Ahana reached ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. promising tomorrow would feel familiar. Inside the echoing hall, Ahana reached ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. reminding her that small steps become stories. As the sky glowed amber, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. promising tomorrow would feel familiar.",
+      "imagePrompt": "One illustration prompt for page 2.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with Ahana listening closely.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p2.svg",
+      "audioUrl": "/generated/sample-ahana/p2.mp3"
+    },
+    {
+      "pageNo": 3,
+      "text": "In the quiet evening, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. and everyone agreed the moment was just right. Inside the echoing hall, Ahana imagined ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. reminding her that small steps become stories. Beside the friendly guide, Ahana imagined ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. showing how patience hums like a lullaby. In the quiet evening, Ahana reached ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. and the room settled into calm twinkles. Inside the echoing hall, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. promising tomorrow would feel familiar. Inside the echoing hall, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. showing how patience hums like a lullaby. Under Papa's gentle smile, Ahana giggled ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. and everyone agreed the moment was just right. Inside the echoing hall, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with soft slippers on clean floors. and everyone agreed the moment was just right.",
+      "imagePrompt": "One illustration prompt for page 3.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with soft slippers on clean floors.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p3.svg",
+      "audioUrl": "/generated/sample-ahana/p3.mp3"
+    },
+    {
+      "pageNo": 4,
+      "text": "Beside the friendly guide, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. showing how patience hums like a lullaby. Around the cozy corner, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. showing how patience hums like a lullaby. Around the cozy corner, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. and the room settled into calm twinkles. Around the cozy corner, Ahana listened ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. promising tomorrow would feel familiar. As the sky glowed amber, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. showing how patience hums like a lullaby. With a careful breath, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. gathering tiny memories like polished stones. Inside the echoing hall, Ahana imagined ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. showing how patience hums like a lullaby. Soft lamp light followed as Ahana imagined ahana experiences the helping baby sister shreya with bedtime with gentle rain tapping windows. and the room settled into calm twinkles.",
+      "imagePrompt": "One illustration prompt for page 4.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with gentle rain tapping windows.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p4.svg",
+      "audioUrl": "/generated/sample-ahana/p4.mp3"
+    },
+    {
+      "pageNo": 5,
+      "text": "Soft lamp light followed as Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. showing how patience hums like a lullaby. With a careful breath, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. reminding her that small steps become stories. Inside the echoing hall, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. promising tomorrow would feel familiar. As the sky glowed amber, Ahana hugged ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. and everyone agreed the moment was just right. Soft lamp light followed as Ahana noticed ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. reminding her that small steps become stories. Around the cozy corner, Ahana imagined ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. showing how patience hums like a lullaby. Around the cozy corner, Ahana giggled ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. reminding her that small steps become stories. Around the cozy corner, Ahana tiptoed ahana experiences the helping baby sister shreya with bedtime with ahana listening closely. reminding her that small steps become stories.",
+      "imagePrompt": "One illustration prompt for page 5.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with Ahana listening closely.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p5.svg",
+      "audioUrl": "/generated/sample-ahana/p5.mp3"
+    },
+    {
+      "pageNo": 6,
+      "text": "Soft lamp light followed as Ahana hugged ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. showing how patience hums like a lullaby. Inside the echoing hall, Ahana listened ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. showing how patience hums like a lullaby. In the quiet evening, Ahana whispered ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. making the air smell of cinnamon courage. As the sky glowed amber, Ahana reached ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. making the air smell of cinnamon courage. Around the cozy corner, Ahana listened ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. promising tomorrow would feel familiar. With a careful breath, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. showing how patience hums like a lullaby. With a careful breath, Ahana noticed ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. and the room settled into calm twinkles. Beside the friendly guide, Ahana giggled ahana experiences the helping baby sister shreya with bedtime with plush bunny tucked under arm. reminding her that small steps become stories.",
+      "imagePrompt": "One illustration prompt for page 6.\nStyle: soft watercolor, pastel palette, rounded shapes; non-derivative wardrobe.\nCharacter card: soft watercolor, warm light, comfy jumper (Ahana: 4–5 years, lives in Ulm, baby sister Shreya, Papa).\nScene: Ahana experiences the helping baby sister Shreya with bedtime with plush bunny tucked under arm.. Camera: eye-level, medium shot. Cozy lighting.\nNegative: low-res, text, watermark, signature, known-franchise look-alikes.\nReturn JSON: { \"prompt\":\"...\", \"negative\":\"...\" }.",
+      "imageUrl": "/generated/sample-ahana/p6.svg",
+      "audioUrl": "/generated/sample-ahana/p6.mp3"
+    }
+  ],
+  "createdAt": "2025-10-18T21:28:15.228Z",
+  "updatedAt": "2025-10-18T21:28:15.228Z",
+  "moral": "Calm breaths turn jitters into joy."
+}

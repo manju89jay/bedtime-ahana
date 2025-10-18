@@ -22,6 +22,12 @@ pnpm dev
 # open http://localhost:3000
 Scripts: pnpm build, pnpm start, pnpm lint, pnpm test
 
+### 📘 Sample Output on Build
+
+- `npm run build` (or `pnpm build`) now runs a `postbuild` step that compiles a demo story using the local generation stubs.
+- The resulting book JSON is saved to [`data/books/sample-ahana.json`](data/books/sample-ahana.json) and the exported PDF is written to [`public/generated/sample-ahana/book.pdf`](public/generated/sample-ahana/book.pdf).
+- You can run the generator manually via `npm run generate:sample` to refresh the assets, or open the reader at [/reader/sample-ahana](http://localhost:3000/reader/sample-ahana) after starting the dev server.
+
 ### 🛠 Build Automation
 
 Run the project’s full build pipeline with the helper scripts in [`scripts/`](scripts/):
