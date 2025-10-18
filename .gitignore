@@ -8,3 +8,5 @@ public/generated/*.pdf
 public/generated/*.png
 public/generated/*.svg
 public/generated/*.mp3
+
+coverage
