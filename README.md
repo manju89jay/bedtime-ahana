@@ -22,6 +22,15 @@ pnpm dev
 # open http://localhost:3000
 Scripts: pnpm build, pnpm start, pnpm lint, pnpm test
 
+### 🛠 Build Automation
+
+Run the project’s full build pipeline with the helper scripts in [`scripts/`](scripts/):
+
+- **macOS/Linux:** `npm run build:all`
+- **Windows (PowerShell):** `npm run build:all:windows`
+
+The Windows command wraps [`scripts/build-all.ps1`](scripts/build-all.ps1), which mirrors the logic of the Bash script used on Unix-like systems.
+
 🧩 Data Model
 See /types/book.ts.
 
