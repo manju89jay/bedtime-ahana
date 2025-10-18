@@ -72,7 +72,8 @@ export function ReaderNav({ initialBook, onPersist, onExport }: ReaderNavProps) 
       const splitText = doc.splitTextToSize(p.text, 480);
       doc.text(splitText, 40, 130);
     });
-    const pdfBase64 = btoa(doc.output("binarystring"));
+    const pdfDataUri = doc.output("datauristring");
+    const pdfBase64 = pdfDataUri.split(",")[1] ?? "";
     setExportStatus("Saving PDF...");
     const url = await onExport(pdfBase64);
     setExportStatus(`Saved to ${url}`);
