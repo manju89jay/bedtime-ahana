@@ -55,4 +55,17 @@ describe("outline", () => {
     expect(outline.title).toBe("Ahana and the Visit to the city library");
     expect(outline.pages.every((page) => page.summary.includes("visit to the city library"))).toBe(true);
   });
+
+  it("falls back to a themed prompt when no idea is provided", async () => {
+    const outline = await generateOutline({
+      name: "Ahana",
+      age: 5,
+      tone: "calm",
+      language: "en",
+      characterCard: CHARACTER
+    });
+
+    expect(outline.title.startsWith("Ahana and the ")).toBe(true);
+    expect(outline.pages.every((page) => page.summary.length > 0)).toBe(true);
+  });
 });
