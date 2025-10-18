@@ -5,7 +5,6 @@ import { Form } from "@/components/Form";
 import { Progress } from "@/components/Progress";
 import { PageCard } from "@/components/PageCard";
 import { Banner } from "@/components/Banner";
-import { ensureBookDirs, saveBook } from "@/lib/storage";
 import { createBookId } from "@/lib/id";
 import type { Book, Page } from "@/types/book";
 
@@ -52,7 +51,6 @@ export default function CreatePage() {
       if (!outlineRes.ok) throw new Error("Outline failed");
       const outline = await outlineRes.json();
       const bookId = createBookId();
-      await ensureBookDirs(bookId);
       const pages: Page[] = [];
       for (const pageBeat of outline.pages) {
         setStatus(`Writing page ${pageBeat.pageNo}...`);
@@ -119,7 +117,12 @@ export default function CreatePage() {
         moral: outline.moral
       };
 
-      await saveBook(newBook);
+      const saveRes = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBook)
+      });
+      if (!saveRes.ok) throw new Error("Saving book failed");
       setBook(newBook);
       setStatus("Book saved. View it in the reader.");
     } catch (e) {
