@@ -95,6 +95,20 @@ describe("storage", () => {
     expect(warnSpy.mock.calls[0][0]).toContain("Skipping invalid book file invalid.json");
   });
 
+  it("deletes a book", async () => {
+    const book = createBook();
+    await storage.saveBook(book);
+    const deleted = await storage.deleteBook(book.bookId);
+    expect(deleted).toBe(true);
+    const loaded = await storage.loadBook(book.bookId);
+    expect(loaded).toBeNull();
+  });
+
+  it("returns false when deleting a non-existent book", async () => {
+    const deleted = await storage.deleteBook("does-not-exist");
+    expect(deleted).toBe(false);
+  });
+
   it("builds public asset paths and urls", () => {
     const assetPath = storage.getPublicAssetPath("abc", "p1.svg");
     const assetUrl = storage.getPublicAssetUrl("abc", "p1.svg");
