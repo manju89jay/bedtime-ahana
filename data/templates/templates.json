@@ -1,0 +1,42 @@
+[
+  {
+    "id": "bedtime-routine",
+    "name": "Bedtime Routine",
+    "icon": "moon",
+    "description": "A calm wind-down story about getting ready for bed — brushing teeth, finding a favorite stuffed animal, and cozy goodnight rituals.",
+    "prompt": "Write a gentle bedtime routine story. The child is getting ready for bed — maybe brushing teeth, picking out pajamas, finding their favorite stuffed animal, and saying goodnight to family. The story should feel warm, repetitive in a soothing way, and end with the child happily falling asleep.",
+    "tone": "calm"
+  },
+  {
+    "id": "adventure-quest",
+    "name": "Adventure Quest",
+    "icon": "compass",
+    "description": "A gentle exploration story — discovering something wonderful in the backyard, park, or a familiar place.",
+    "prompt": "Write a gentle adventure story. The child discovers something interesting in a familiar place — maybe their backyard, a nearby park, or their own room. They explore with curiosity and wonder, make a small discovery, and the adventure naturally winds down as evening comes. Keep the adventure low-stakes and warm, ending with the child feeling satisfied and sleepy.",
+    "tone": "adventurous"
+  },
+  {
+    "id": "creative-day",
+    "name": "Creative Day",
+    "icon": "palette",
+    "description": "A playful story about making something — art, a blanket fort, cookies, or a gift for someone special.",
+    "prompt": "Write a story about the child creating something. Maybe they're painting a picture, building a blanket fort, baking cookies with a family member, or making a gift for someone they love. The joy is in the process, not perfection. The story ends with the child admiring what they made, feeling proud and cozy, ready for sleep.",
+    "tone": "playful"
+  },
+  {
+    "id": "friendship",
+    "name": "Friendship",
+    "icon": "heart",
+    "description": "A warm story about helping a friend, making a new one, or a sweet moment with a sibling or pet.",
+    "prompt": "Write a warm story about friendship or kindness. The child might help a friend who is sad, make a new friend at the park, share something with a sibling, or have a sweet moment with a pet. The story should feel emotionally warm and gentle, ending with the child feeling happy about the connection they made, settling into bed with a smile.",
+    "tone": "calm"
+  },
+  {
+    "id": "nature-walk",
+    "name": "Nature Walk",
+    "icon": "leaf",
+    "description": "A calming story about noticing beautiful things outdoors — leaves, bugs, clouds, puddles, or stars.",
+    "prompt": "Write a calming nature story. The child goes for a walk and notices beautiful small things — colorful leaves, a ladybug, interesting clouds, rain puddles, or stars beginning to appear. Each discovery brings a moment of quiet wonder. The walk ends as the sun sets or stars come out, and the child heads home feeling peaceful and ready for bed.",
+    "tone": "calm"
+  }
+]

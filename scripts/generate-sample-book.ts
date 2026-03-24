@@ -1,146 +1,128 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { jsPDF } from "jspdf";
-import { createImageAsset } from "../lib/ai/image";
-import { createTTSAsset } from "../lib/ai/tts";
-import { generateOutline, generatePageText } from "../lib/ai/text";
+import { writePlaceholderImage, generateCoverImage } from "../lib/ai/image";
+import { generateStoryFallback } from "../lib/ai/text";
 import { getPublicAssetPath, saveBook } from "../lib/storage";
-import type { Book, CharacterCard } from "../types/book";
+import type { Book, Page } from "../types/book";
 
 const SAMPLE_BOOK_ID = "sample-ahana";
 
-const AHANA_CARD: CharacterCard = {
+const childProfile = {
   name: "Ahana",
   age: 4,
-  home: "Ulm, Germany",
-  family: ["Papa", "Baby sister Shreya"],
-  traits: ["curious", "kind", "gentle helper"],
-  sidekick: "plush bunny",
-  visualStyle: "soft watercolor, warm light, comfy jumper"
+  interests: ["painting", "her baby sister Shreya", "plush bunny"]
 };
-
-async function buildPages(bookId: string, outlinePages: Array<{
-  pageNo: number;
-  summary: string;
-}>) {
-  const pages: Book["pages"] = [];
-
-  for (const page of outlinePages) {
-    const textResult = await generatePageText({
-      pageNo: page.pageNo,
-      language: "en",
-      age: AHANA_CARD.age,
-      beat_summary: page.summary,
-      characterCard: AHANA_CARD
-    });
-
-    const { prompt, imageUrl } = await createImageAsset({
-      pageNo: page.pageNo,
-      characterVisuals: AHANA_CARD.visualStyle,
-      sceneSummary: page.summary,
-      bookId
-    });
-
-    const { audioUrl } = await createTTSAsset({
-      bookId,
-      pageNo: page.pageNo,
-      text: textResult.text,
-      language: "en",
-      voice: "soft-lullaby"
-    });
-
-    pages.push({
-      pageNo: page.pageNo,
-      text: textResult.text,
-      imagePrompt: prompt,
-      imageUrl,
-      audioUrl
-    });
-  }
-
-  return pages;
-}
-
-async function writePdf(book: Book) {
-  const pdf = new jsPDF({ orientation: "landscape", format: "a5", unit: "pt" });
-
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(28);
-  const titleLines = pdf.splitTextToSize(book.title, 360);
-  pdf.text(titleLines, 40, 120);
-  pdf.setFontSize(16);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`A bedtime story for ${book.characters[0]?.name ?? "a friend"}`, 40, 160);
-  if (book.moral) {
-    pdf.setFontSize(12);
-    pdf.text(`Moral: ${book.moral}`, 40, 190, { maxWidth: 480 });
-  }
-
-  book.pages.forEach((page, index) => {
-    if (index === 0) {
-      pdf.addPage("a5", "landscape");
-    } else {
-      pdf.addPage();
-    }
-
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(18);
-    pdf.text(`Page ${page.pageNo}`, 40, 80);
-
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    const bodyLines = pdf.splitTextToSize(page.text, 500);
-    pdf.text(bodyLines, 40, 120);
-
-    pdf.setFontSize(10);
-    pdf.setTextColor(100);
-    const promptLines = pdf.splitTextToSize(`Art prompt: ${page.imagePrompt}`, 500);
-    pdf.text(promptLines, 40, 320);
-    pdf.setTextColor(0);
-  });
-
-  const arrayBuffer = pdf.output("arraybuffer");
-  const buffer = Buffer.from(arrayBuffer);
-  const pdfPath = getPublicAssetPath(book.bookId, "book.pdf");
-  await fs.mkdir(path.dirname(pdfPath), { recursive: true });
-  await fs.writeFile(pdfPath, new Uint8Array(buffer));
-  return pdfPath;
-}
 
 async function main() {
   console.log("Generating sample bedtime book...");
-  const outline = await generateOutline({
-    name: AHANA_CARD.name,
-    age: AHANA_CARD.age,
-    tone: "calm",
-    language: "en",
-    storyIdea: "helping baby sister Shreya with bedtime",
-    characterCard: AHANA_CARD
+
+  const story = generateStoryFallback(childProfile, "helping baby sister Shreya with bedtime");
+
+  // Generate cover
+  const cover = await generateCoverImage({
+    title: story.title,
+    childName: childProfile.name,
+    childAge: childProfile.age,
+    bookId: SAMPLE_BOOK_ID
   });
 
-  const now = new Date().toISOString();
-  const pages = await buildPages(
-    SAMPLE_BOOK_ID,
-    outline.pages.map((page) => ({ pageNo: page.pageNo, summary: page.summary }))
-  );
+  // Generate placeholder images for each page
+  const storyPages: Page[] = [];
+  for (const p of story.pages) {
+    const { prompt, imageUrl } = await writePlaceholderImage({
+      pageNo: p.pageNo,
+      imageDescription: p.imageDescription,
+      childName: childProfile.name,
+      childAge: childProfile.age,
+      bookId: SAMPLE_BOOK_ID
+    });
+    storyPages.push({
+      pageNo: p.pageNo,
+      type: "story",
+      text: p.text,
+      imagePrompt: prompt,
+      imageUrl
+    });
+  }
 
+  const coverPage: Page = {
+    pageNo: 0,
+    type: "cover",
+    text: story.title,
+    imagePrompt: "",
+    imageUrl: cover.imageUrl
+  };
+
+  const backPage: Page = {
+    pageNo: 7,
+    type: "back",
+    text: `A bedtime story made just for ${childProfile.name}`,
+    imagePrompt: "",
+    imageUrl: ""
+  };
+
+  const now = new Date().toISOString();
   const book: Book = {
     bookId: SAMPLE_BOOK_ID,
-    title: outline.title,
-    language: "en",
-    characters: [AHANA_CARD],
-    pages,
+    childProfile,
+    title: story.title,
+    pages: [coverPage, ...storyPages, backPage],
     createdAt: now,
-    updatedAt: now,
-    moral: outline.moral
+    updatedAt: now
   };
 
   await saveBook(book);
-  const pdfPath = await writePdf(book);
+
+  // Generate PDF
+  const pdf = new jsPDF({ orientation: "landscape", format: "a5", unit: "pt" });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+  // Title page
+  pdf.setFillColor(74, 95, 193);
+  pdf.rect(0, 0, pageWidth, pageHeight, "F");
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(28);
+  const titleLines = pdf.splitTextToSize(book.title, pageWidth - 80);
+  pdf.text(titleLines, pageWidth / 2, pageHeight / 2 - 20, { align: "center" });
+  pdf.setFontSize(14);
+  pdf.text(`A bedtime story for ${childProfile.name}`, pageWidth / 2, pageHeight / 2 + 20, {
+    align: "center"
+  });
+
+  // Story pages
+  for (const sp of storyPages) {
+    pdf.addPage();
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+    pdf.setTextColor(180, 180, 180);
+    pdf.setFontSize(10);
+    pdf.text(`${sp.pageNo}`, pageWidth - 30, pageHeight - 20);
+    pdf.setTextColor(40, 40, 40);
+    pdf.setFontSize(13);
+    const splitText = pdf.splitTextToSize(sp.text, pageWidth - 80);
+    pdf.text(splitText, 40, 50);
+  }
+
+  // Back cover
+  pdf.addPage();
+  pdf.setFillColor(242, 181, 212);
+  pdf.rect(0, 0, pageWidth, pageHeight, "F");
+  pdf.setTextColor(74, 95, 193);
+  pdf.setFontSize(14);
+  pdf.text(`Made with love for ${childProfile.name}`, pageWidth / 2, pageHeight / 2, {
+    align: "center"
+  });
+
+  const arrayBuffer = pdf.output("arraybuffer");
+  const pdfPath = getPublicAssetPath(book.bookId, "book.pdf");
+  await fs.mkdir(path.dirname(pdfPath), { recursive: true });
+  await fs.writeFile(pdfPath, new Uint8Array(arrayBuffer));
 
   console.log(`Sample book saved to data/books/${book.bookId}.json`);
   console.log(`PDF written to ${pdfPath}`);
-  console.log("Done. You can open the Reader at /reader/sample-ahana to view it.");
+  console.log("Done. Open the Reader at /reader/sample-ahana to view it.");
 }
 
 main().catch((error) => {

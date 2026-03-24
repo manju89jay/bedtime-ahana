@@ -48,6 +48,16 @@ export async function listBooks(): Promise<Book[]> {
   return books.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
 }
 
+export async function deleteBook(bookId: string): Promise<boolean> {
+  try {
+    const filePath = path.join(BOOKS_DIR, `${bookId}.json`);
+    await fs.unlink(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function getPublicAssetPath(bookId: string, fileName: string) {
   return path.join(PUBLIC_DIR, bookId, fileName);
 }

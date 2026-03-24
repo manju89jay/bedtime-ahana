@@ -2,15 +2,20 @@ import type { Page } from "@/types/book";
 
 export function PageCard({ page }: { page: Page }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wide text-slate-500">Page {page.pageNo}</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+          {page.type === "cover" ? "Cover" : page.type === "back" ? "Back Cover" : `Page ${page.pageNo}`}
+        </span>
       </div>
-      <p className="text-sm text-slate-700">{page.text}</p>
-      <div className="rounded border border-slate-200 bg-slate-100 p-3 text-xs text-slate-500">
-        <p className="font-medium text-slate-600">Prompt:</p>
-        <p>{page.imagePrompt}</p>
-      </div>
+      {page.imageUrl && (
+        <img
+          src={page.imageUrl}
+          alt={`Page ${page.pageNo}`}
+          className="w-full rounded-lg border border-slate-100 object-cover"
+        />
+      )}
+      <p className="text-sm leading-relaxed text-slate-700">{page.text}</p>
     </div>
   );
 }
