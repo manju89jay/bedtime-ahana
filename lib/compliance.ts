@@ -7,7 +7,11 @@ const FORBIDDEN_TOKENS = [
   "known franchise",
   "paw patrol",
   "disney",
-  "pixar"
+  "pixar",
+  "peppa pig",
+  "frozen",
+  "elsa",
+  "cocomelon"
 ];
 
 export function checkBookForIPRisks(book: Book): string[] {
