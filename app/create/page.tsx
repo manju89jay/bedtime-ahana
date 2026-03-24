@@ -1,165 +1,177 @@
 "use client";
 
 import { useState } from "react";
-import { Form } from "@/components/Form";
-import { Progress } from "@/components/Progress";
-import { PageCard } from "@/components/PageCard";
+import { useRouter } from "next/navigation";
+import { ChildInfoForm } from "@/components/Form";
+import { TemplatePicker } from "@/components/TemplatePicker";
+import { GenerationProgress } from "@/components/Progress";
 import { Banner } from "@/components/Banner";
-import { createBookId } from "@/lib/id";
-import type { Book, Page } from "@/types/book";
+import type { ChildProfile, StoryTemplate } from "@/types/book";
 
-const ahanaCard = {
-  name: "Ahana",
-  age: 4,
-  home: "Ulm, Germany",
-  family: ["Papa", "baby sister Shreya"],
-  traits: ["curious", "kind", "gentle helper"],
-  sidekick: "plush bunny",
-  visualStyle: "soft watercolor, warm light, cozy sweaters"
-};
+import templates from "@/data/templates/templates.json";
+
+type Step = { label: string; status: "pending" | "active" | "done" };
 
 export default function CreatePage() {
-  const [book, setBook] = useState<Book | null>(null);
-  const [status, setStatus] = useState<string>("");
-  const [isGenerating, setGenerating] = useState(false);
+  const router = useRouter();
+  const [step, setStep] = useState<"info" | "story" | "generating">("info");
+  const [childProfile, setChildProfile] = useState<ChildProfile | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<StoryTemplate | null>(null);
+  const [customIdea, setCustomIdea] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [progressSteps, setProgressSteps] = useState<Step[]>([]);
 
-  const handleCreate = async (formValues: {
-    name: string;
-    age: number;
-    tone: "calm" | "adventurous";
-    language: "en" | "de";
-    storyIdea?: string;
-  }) => {
+  const handleChildSubmit = (profile: ChildProfile) => {
+    setChildProfile(profile);
+    setStep("story");
+  };
+
+  const handleGenerate = async () => {
+    if (!childProfile) return;
+
+    setStep("generating");
+    setError(null);
+    setProgressSteps([
+      { label: "Writing your story...", status: "active" },
+      { label: "Creating illustrations...", status: "pending" },
+      { label: "Assembling your book...", status: "pending" }
+    ]);
+
     try {
-      setGenerating(true);
-      setError(null);
-      setStatus("Generating outline...");
-      const characterCard = { ...ahanaCard, name: formValues.name };
-      const outlineRes = await fetch("/api/outline", {
+      const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formValues.name,
-          age: formValues.age,
-          tone: formValues.tone,
-          language: formValues.language,
-          storyIdea: formValues.storyIdea,
-          characterCard
+          childProfile,
+          templateId: selectedTemplate?.id,
+          storyIdea: customIdea || undefined,
+          templatePrompt: selectedTemplate?.prompt
         })
       });
-      if (!outlineRes.ok) throw new Error("Outline failed");
-      const outline = await outlineRes.json();
-      const bookId = createBookId();
-      const pages: Page[] = [];
-      for (const pageBeat of outline.pages) {
-        setStatus(`Writing page ${pageBeat.pageNo}...`);
-        const pageRes = await fetch("/api/page", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            pageNo: pageBeat.pageNo,
-            language: formValues.language,
-            age: formValues.age,
-            beat_summary: pageBeat.summary,
-            characterCard
-          })
-        });
-        if (!pageRes.ok) throw new Error("Page generation failed");
-        const pageJson = await pageRes.json();
 
-        setStatus(`Creating art prompt for page ${pageBeat.pageNo}...`);
-        const imageRes = await fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            pageNo: pageBeat.pageNo,
-            characterVisuals: characterCard.visualStyle,
-            sceneSummary: pageBeat.summary,
-            bookId
-          })
-        });
-        if (!imageRes.ok) throw new Error("Image prompt failed");
-        const imageJson = await imageRes.json();
-
-        setStatus(`Synthesizing narration for page ${pageBeat.pageNo}...`);
-        const ttsRes = await fetch("/api/tts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: pageJson.text,
-            language: formValues.language,
-            voice: "calm-parent",
-            bookId,
-            pageNo: pageBeat.pageNo
-          })
-        });
-        if (!ttsRes.ok) throw new Error("Audio generation failed");
-        const ttsJson = await ttsRes.json();
-
-        pages.push({
-          pageNo: pageBeat.pageNo,
-          text: pageJson.text,
-          imagePrompt: imageJson.prompt,
-          imageUrl: imageJson.imageUrl,
-          audioUrl: ttsJson.audioUrl
-        });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Generation failed");
       }
 
-      const newBook: Book = {
-        bookId,
-        title: outline.title,
-        language: formValues.language,
-        characters: [characterCard],
-        pages,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        moral: outline.moral
-      };
+      setProgressSteps([
+        { label: "Writing your story...", status: "done" },
+        { label: "Creating illustrations...", status: "done" },
+        { label: "Assembling your book...", status: "done" }
+      ]);
 
-      const saveRes = await fetch("/api/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newBook)
-      });
-      if (!saveRes.ok) throw new Error("Saving book failed");
-      setBook(newBook);
-      setStatus("Book saved. View it in the reader.");
-    } catch (e) {
-      console.error(e);
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setGenerating(false);
+      const { book } = await res.json();
+
+      // Brief pause so user sees completion state
+      await new Promise((r) => setTimeout(r, 600));
+      router.push(`/reader/${book.bookId}`);
+    } catch (e: any) {
+      setError(e.message || "Something went wrong. Please try again.");
+      setStep("story");
     }
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Banner title="Ahana&apos;s character card" description="The Create flow is pre-filled with Ahana&apos;s life in Ulm, her baby sister Shreya, and Papa." />
-      <Form onSubmit={handleCreate} isGenerating={isGenerating} />
-      <Progress status={status} active={isGenerating} />
-      {error && <Banner tone="error" title="Generation failed" description={error} />}
-      {book && (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold">Book ready!</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            View the freshly generated book with six illustrated pages in the reader.
+    <div className="flex flex-col gap-8">
+      {/* Step indicator */}
+      <div className="flex items-center gap-2 text-sm text-slate-400">
+        <span className={step === "info" ? "font-semibold text-brand-primary" : "text-slate-500"}>
+          1. Child Info
+        </span>
+        <span>→</span>
+        <span
+          className={
+            step === "story" || step === "generating"
+              ? "font-semibold text-brand-primary"
+              : ""
+          }
+        >
+          2. Choose Story
+        </span>
+        <span>→</span>
+        <span className={step === "generating" ? "font-semibold text-brand-primary" : ""}>
+          3. Your Book
+        </span>
+      </div>
+
+      {/* Step 1: Child Info */}
+      {step === "info" && (
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-slate-800">
+            Tell us about your child
+          </h2>
+          <p className="mb-6 text-sm text-slate-500">
+            We&apos;ll use this to personalize the story.
           </p>
-          <a
-            href={`/reader/${book.bookId}`}
-            className="mt-4 inline-flex rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white"
+          <ChildInfoForm onSubmit={handleChildSubmit} isDisabled={false} />
+        </div>
+      )}
+
+      {/* Step 2: Story Selection */}
+      {step === "story" && childProfile && (
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800">
+                Pick a story for {childProfile.name}
+              </h2>
+              <p className="text-sm text-slate-500">
+                Choose a template or write your own idea below.
+              </p>
+            </div>
+            <button
+              onClick={() => setStep("info")}
+              className="text-sm text-slate-400 hover:text-slate-600"
+            >
+              ← Back
+            </button>
+          </div>
+
+          <TemplatePicker
+            templates={templates as StoryTemplate[]}
+            selected={selectedTemplate?.id || null}
+            onSelect={(t) => {
+              setSelectedTemplate(t);
+              if (t) setCustomIdea("");
+            }}
+          />
+
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs font-medium text-slate-400">OR</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          <div className="rounded-xl bg-white p-6 shadow-sm">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Write your own story idea
+            </label>
+            <textarea
+              rows={3}
+              className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+              placeholder={`e.g. ${childProfile.name} finds a tiny dragon egg in the garden and has to keep it warm until it hatches`}
+              value={customIdea}
+              onChange={(e) => {
+                setCustomIdea(e.target.value);
+                if (e.target.value) setSelectedTemplate(null);
+              }}
+            />
+          </div>
+
+          {error && <Banner tone="error" title="Generation failed" description={error} />}
+
+          <button
+            onClick={handleGenerate}
+            disabled={!selectedTemplate && !customIdea.trim()}
+            className="self-end rounded-lg bg-brand-primary px-8 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
           >
-            Open reader
-          </a>
+            Create Book
+          </button>
         </div>
       )}
-      {book && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {book.pages.map((page) => (
-            <PageCard key={page.pageNo} page={page} />
-          ))}
-        </div>
-      )}
+
+      {/* Step 3: Generating */}
+      {step === "generating" && <GenerationProgress steps={progressSteps} />}
     </div>
   );
 }

@@ -9,43 +9,61 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-10">
-      <section className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Create a new book</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          Start with Ahana&apos;s character card, customize the prompt, and generate a six-page bedtime book.
+      {/* Hero section */}
+      <section className="rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary p-8 text-white shadow-sm">
+        <h2 className="text-2xl font-bold">Create a bedtime story</h2>
+        <p className="mt-2 max-w-lg text-sm opacity-90">
+          Enter your child&apos;s name, age, and interests. Pick a story template or
+          describe your own idea. Get a personalized bedtime book as a PDF in minutes.
         </p>
-        <div className="mt-4 flex gap-3">
-          <Link
-            href="/create"
-            className="inline-flex items-center justify-center rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white shadow"
-          >
-            Go to Create flow
-          </Link>
-        </div>
+        <Link
+          href="/create"
+          className="mt-6 inline-flex items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-brand-primary shadow-sm no-underline transition-colors hover:bg-white/90"
+        >
+          Get started →
+        </Link>
       </section>
 
-      <section className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Recent books</h2>
-        {books.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-500">No books yet. Generate one to see it here.</p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {books.map((book) => (
-              <li key={book.bookId} className="flex items-center justify-between rounded border border-slate-200 p-3">
-                <div>
-                  <p className="font-medium">{book.title}</p>
-                  <p className="text-xs text-slate-500">
-                    {new Date(book.updatedAt).toLocaleString()} • {book.language.toUpperCase()}
-                  </p>
-                </div>
-                <Link href={`/reader/${book.bookId}`} className="text-sm text-brand-primary">
-                  Open reader →
+      {/* Recent books */}
+      {books.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-lg font-semibold text-slate-800">Your books</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {books.map((book) => {
+              const cover = book.pages?.find((p) => p.type === "cover");
+              return (
+                <Link
+                  key={book.bookId}
+                  href={`/reader/${book.bookId}`}
+                  className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm no-underline transition-shadow hover:shadow-md"
+                >
+                  {/* Cover thumbnail */}
+                  {cover?.imageUrl ? (
+                    <img
+                      src={cover.imageUrl}
+                      alt={book.title}
+                      className="h-36 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-36 items-center justify-center bg-gradient-to-br from-brand-primary to-brand-secondary">
+                      <span className="text-2xl text-white/80">&#x1F4D6;</span>
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col gap-1 p-4">
+                    <p className="font-medium text-slate-800 group-hover:text-brand-primary">
+                      {book.title}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      For {book.childProfile?.name || "—"} •{" "}
+                      {new Date(book.updatedAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

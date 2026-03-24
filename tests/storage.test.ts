@@ -13,27 +13,18 @@ describe("storage", () => {
   const createBook = (overrides: Partial<Book> = {}): Book => ({
     bookId: overrides.bookId ?? "book-1",
     title: overrides.title ?? "Test Story",
-    language: overrides.language ?? "en",
-    characters: overrides.characters ?? [
-      {
-        name: "Ahana",
-        age: 5,
-        home: "Ulm",
-        traits: ["curious"],
-        visualStyle: "soft"
-      }
-    ],
+    childProfile: overrides.childProfile ?? { name: "Ahana", age: 5, interests: ["painting"] },
     pages: overrides.pages ?? [
       {
         pageNo: 1,
+        type: "story",
         text: "Sample text",
         imagePrompt: "Prompt",
         imageUrl: "/generated/book-1/p1.svg"
       }
     ],
     createdAt: overrides.createdAt ?? new Date().toISOString(),
-    updatedAt: overrides.updatedAt ?? new Date().toISOString(),
-    moral: overrides.moral
+    updatedAt: overrides.updatedAt ?? new Date().toISOString()
   });
 
   const loadStorageModule = async () => {
@@ -74,8 +65,7 @@ describe("storage", () => {
   it("rethrows unexpected filesystem errors", async () => {
     const error = Object.assign(new Error("boom"), { code: "EACCES" });
     const spy = vi.spyOn(fs, "readFile").mockRejectedValue(error);
-    await expect(storage.loadBook("broken"))
-      .rejects.toBe(error);
+    await expect(storage.loadBook("broken")).rejects.toBe(error);
     spy.mockRestore();
   });
 
@@ -103,6 +93,20 @@ describe("storage", () => {
     expect(books.map((book) => book.bookId)).toEqual(["newer", "older"]);
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy.mock.calls[0][0]).toContain("Skipping invalid book file invalid.json");
+  });
+
+  it("deletes a book", async () => {
+    const book = createBook();
+    await storage.saveBook(book);
+    const deleted = await storage.deleteBook(book.bookId);
+    expect(deleted).toBe(true);
+    const loaded = await storage.loadBook(book.bookId);
+    expect(loaded).toBeNull();
+  });
+
+  it("returns false when deleting a non-existent book", async () => {
+    const deleted = await storage.deleteBook("does-not-exist");
+    expect(deleted).toBe(false);
   });
 
   it("builds public asset paths and urls", () => {
