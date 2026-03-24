@@ -5,19 +5,11 @@ import type { Book } from "@/types/book";
 const createBook = (text: string): Book => ({
   bookId: "sample",
   title: "Sample",
-  language: "en",
-  characters: [
-    {
-      name: "Ahana",
-      age: 5,
-      home: "Ulm",
-      traits: ["curious"],
-      visualStyle: "soft"
-    }
-  ],
+  childProfile: { name: "Ahana", age: 5, interests: ["painting"] },
   pages: [
     {
       pageNo: 1,
+      type: "story",
       text,
       imagePrompt: text,
       imageUrl: "/generated/sample/p1.svg"

@@ -1,129 +1,83 @@
 "use client";
 
 import { useState } from "react";
+import type { ChildProfile } from "@/types/book";
 
-const defaultValues = {
-  name: "Ahana",
-  age: 5,
-  tone: "calm" as const,
-  language: "en" as const,
-  storyIdea: "Helping baby sister Shreya settle at bedtime"
-};
-
-type FormValues = typeof defaultValues;
-
-export function Form({
+export function ChildInfoForm({
   onSubmit,
-  isGenerating
+  isDisabled
 }: {
-  onSubmit: (values: FormValues) => Promise<void>;
-  isGenerating: boolean;
+  onSubmit: (profile: ChildProfile) => void;
+  isDisabled: boolean;
 }) {
-  const [values, setValues] = useState<FormValues>(defaultValues);
+  const [name, setName] = useState("");
+  const [age, setAge] = useState(4);
+  const [interestsText, setInterestsText] = useState("");
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setValues((prev) => ({ ...prev, [name]: name === "age" ? Number(value) : value }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    await onSubmit(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const interests = interestsText
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    onSubmit({ name, age, interests });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="grid gap-4 rounded-lg bg-white p-6 shadow-sm md:grid-cols-2"
-    >
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className="space-y-1.5">
         <label className="text-sm font-medium text-slate-700" htmlFor="name">
-          Child name
+          Child&apos;s name
         </label>
         <input
           id="name"
-          name="name"
-          className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-          value={values.name}
-          onChange={handleChange}
+          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          placeholder="e.g. Ahana"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label className="text-sm font-medium text-slate-700" htmlFor="age">
           Age
         </label>
-        <input
+        <select
           id="age"
-          name="age"
-          type="number"
-          min={3}
-          max={8}
-          className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-          value={values.age}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700" htmlFor="tone">
-          Tone
-        </label>
-        <select
-          id="tone"
-          name="tone"
-          className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-          value={values.tone}
-          onChange={handleChange}
+          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          value={age}
+          onChange={(e) => setAge(Number(e.target.value))}
         >
-          <option value="calm">Calm</option>
-          <option value="adventurous">Adventurous</option>
+          {[3, 4, 5, 6, 7, 8].map((a) => (
+            <option key={a} value={a}>
+              {a} years old
+            </option>
+          ))}
         </select>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700" htmlFor="language">
-          Language
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium text-slate-700" htmlFor="interests">
+          Interests
         </label>
-        <select
-          id="language"
-          name="language"
-          className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-          value={values.language}
-          onChange={handleChange}
-        >
-          <option value="en">English</option>
-          <option value="de">Deutsch</option>
-        </select>
-      </div>
-
-      <div className="md:col-span-2 space-y-2">
-        <label className="text-sm font-medium text-slate-700" htmlFor="storyIdea">
-          Story idea (optional)
-        </label>
-        <textarea
-          id="storyIdea"
-          name="storyIdea"
-          rows={3}
-          className="w-full rounded border border-slate-200 px-3 py-2 text-sm"
-          value={values.storyIdea}
-          onChange={handleChange}
+        <input
+          id="interests"
+          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          placeholder="e.g. dinosaurs, painting, her baby sister"
+          value={interestsText}
+          onChange={(e) => setInterestsText(e.target.value)}
         />
-        <p className="text-xs text-slate-500">Voice upload placeholder: coming soon.</p>
+        <p className="text-xs text-slate-400">Separate with commas</p>
       </div>
 
-      <div className="md:col-span-2 flex justify-end gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={isGenerating}
-          className="inline-flex items-center justify-center rounded bg-brand-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-        >
-          {isGenerating ? "Generating..." : "Generate book"}
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={isDisabled || !name.trim()}
+        className="mt-2 self-end rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
+      >
+        Next
+      </button>
     </form>
   );
 }

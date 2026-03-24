@@ -30,40 +30,34 @@ describe("ai image helpers", () => {
     await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
-  it("replaces placeholders in generated prompts", () => {
-    const { prompt, negative } = image.generateImagePrompt({
-      pageNo: 3,
-      characterVisuals: "Ahana wearing a blue sweater",
-      sceneSummary: "walking through the market",
-      bookId: "book-123"
+  it("creates placeholder images with escaped special characters", async () => {
+    const result = await image.writePlaceholderImage({
+      pageNo: 1,
+      imageDescription: "<calm & cozy>",
+      childName: "Ahana",
+      childAge: 5,
+      bookId: "book-1"
     });
 
-    expect(prompt).toContain("page 3");
-    expect(prompt).toContain("Ahana wearing a blue sweater");
-    expect(prompt).toContain("walking through the market");
-    expect(negative).toContain("known-franchise look-alikes");
-  });
-
-  it("escapes special characters when writing placeholder images", async () => {
-    const filePath = path.join(tmpDir, "public", "generated", "book-1", "p1.svg");
-    await image.writePlaceholderImage({ filePath, prompt: "<calm & cozy>" });
-
+    const filePath = storage.getPublicAssetPath("book-1", "p1.svg");
     const contents = await fs.readFile(filePath, "utf-8");
-    expect(contents).toContain("&lt;calm &amp; cozy>");
+    expect(contents).toContain("&lt;calm &amp; cozy&gt;");
+    expect(result.imageUrl).toBe("/generated/book-1/p1.svg");
   });
 
   it("creates placeholder assets and returns the public url", async () => {
-    const { prompt, imageUrl } = await image.createImageAsset({
+    const { prompt, imageUrl } = await image.writePlaceholderImage({
       bookId: "storybook",
       pageNo: 2,
-      characterVisuals: "soft pastels",
-      sceneSummary: "sitting quietly"
+      imageDescription: "sitting quietly in a garden",
+      childName: "Ahana",
+      childAge: 4
     });
 
     const expectedPath = storage.getPublicAssetPath("storybook", "p2.svg");
     const fileExists = await fs.readFile(expectedPath, "utf-8");
 
-    expect(prompt).toContain("page 2");
+    expect(prompt).toContain("sitting quietly in a garden");
     expect(imageUrl).toBe("/generated/storybook/p2.svg");
     expect(fileExists.length).toBeGreaterThan(0);
   });
