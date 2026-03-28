@@ -76,14 +76,14 @@
 - [x] Free tier PDFs have watermark, paid tier PDFs don't
 
 ## SESSION 7: Auth, Payments & Landing Page
-- [ ] Set up NextAuth.js (email/password, JWT sessions)
-- [ ] Protected routes middleware (/dashboard, /create, /reader)
-- [ ] Login and register pages
-- [ ] Stripe integration stub (4 subscription tiers, webhook handler)
-- [ ] Landing page: hero, how-it-works, sample spread, pricing, FAQ, footer
-- [ ] Dashboard: bookshelf, subscription tier, "Create New Book" button
-- [ ] Write tests: auth flow, protected routes, landing page sections, pricing
-- [ ] Responsive landing page (375px and 1280px)
+- [x] Set up NextAuth.js (email/password, JWT sessions)
+- [x] Protected routes middleware (/dashboard, /create, /reader)
+- [x] Login and register pages
+- [x] Stripe integration stub (4 subscription tiers, webhook handler)
+- [x] Landing page: hero, how-it-works, sample spread, pricing, FAQ, footer
+- [x] Dashboard: bookshelf, subscription tier, "Create New Book" button
+- [x] Write tests: auth flow, protected routes, landing page sections, pricing
+- [x] Responsive landing page (375px and 1280px)
 
 ## SESSION 8: Integration & Full Flow Test
 - [ ] Navigate and fix all pages end-to-end
