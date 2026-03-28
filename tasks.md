@@ -43,15 +43,15 @@
 - [x] Full book generation produces 24 page images on disk
 
 ## SESSION 4: Interactive Book Reader
-- [ ] Build PageView.tsx (square 1:1, full-bleed illustration, zoom on tap)
-- [ ] Build PageTurn.tsx (Framer Motion animation, swipe + arrows)
-- [ ] Build TextOverlay.tsx (semi-transparent, bilingual toggle, inline text editing)
-- [ ] Build AudioPlayer.tsx (placeholder, wired to TTS audioUrl)
-- [ ] Build BookReader.tsx (navigation, night mode, inline editing, save edits)
-- [ ] Build reader page at /app/reader/[bookId]/page.tsx
-- [ ] Build Bookshelf component at /components/bookshelf/Bookshelf.tsx
-- [ ] Write tests: reader navigation, night mode, bookshelf, editing, zoom
-- [ ] Mobile responsive at 375px width
+- [x] Build PageView.tsx (square 1:1, full-bleed illustration, zoom on tap)
+- [x] Build PageTurn.tsx (Framer Motion animation, swipe + arrows)
+- [x] Build TextOverlay.tsx (semi-transparent, bilingual toggle, inline text editing)
+- [x] Build AudioPlayer.tsx (placeholder, wired to TTS audioUrl)
+- [x] Build BookReader.tsx (navigation, night mode, inline editing, save edits)
+- [x] Build reader page at /app/reader/[bookId]/page.tsx
+- [x] Build Bookshelf component at /components/bookshelf/Bookshelf.tsx
+- [x] Write tests: reader navigation, night mode, bookshelf, editing, zoom
+- [x] Mobile responsive at 375px width
 
 ## SESSION 5: Book Creation Wizard
 - [ ] Build ChildProfileStep.tsx (name, age, gender, city, photo, companion, outfit, language)

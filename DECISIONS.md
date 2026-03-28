@@ -57,3 +57,22 @@
 **Context:** Character sheet needs 6 canonical poses for stub mode.
 **Decision:** Generated simple SVG illustrations with a deterministic hash-based color system (hair/outfit derived from child name + color). Poses: front, 3/4 left, 3/4 right, walking, sitting, with companion.
 **Rationale:** Visual stubs that are unique per child (different colors) and show the companion object, giving a realistic preview of what the live system would produce.
+
+---
+
+# Session 4
+
+## Decision 11: New reader components vs rewriting old ReaderNav
+**Context:** Session 1 left the old `ReaderNav` component working with legacy types. Session 4 requires a full reader with new types.
+**Decision:** Created new reader components (`components/reader/`) using the v2 `Book`/`Page` types. Kept old `ReaderNav` and `components/PageCard.tsx` for legacy compatibility. Updated `app/reader/[bookId]/page.tsx` to use the new `BookReader`.
+**Rationale:** Clean break from legacy code. Old components remain for reference until removed in Session 8.
+
+## Decision 12: Framer Motion for page animations
+**Context:** Spec requires page-turn animation with swipe on mobile.
+**Decision:** Used `framer-motion` `AnimatePresence` + `motion.div` with slide variants. Touch swipe detection via `onTouchStart`/`onTouchEnd` with 50px threshold.
+**Rationale:** Framer Motion is already in the spec's tech stack (Section 8). Provides smooth CSS-based animations with minimal bundle impact.
+
+## Decision 13: Component testing with jsdom + testing-library
+**Context:** UI components need testing but vitest defaults to `node` environment.
+**Decision:** Used `@vitest-environment jsdom` directive in test files, `@testing-library/react` for rendering, and `esbuild.jsx: 'automatic'` in vitest config for JSX transform. Mocked `framer-motion` and `next/link` with `React.createElement`.
+**Rationale:** Per-file environment avoids slowing down non-UI tests. Automatic JSX transform matches Next.js behavior.
