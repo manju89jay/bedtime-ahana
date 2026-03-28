@@ -184,14 +184,30 @@ DO THE FOLLOWING IN ORDER:
 7. Create /data/templates/kindergarten-first-day.json with all 24 beats
    (see the story template structure — page beats for "Erster Tag im Kindergarten")
 
-8. Update /tests/ with:
+8. Migrate existing templates in /data/templates/templates.json:
+   - The current file has 5 templates in a flat format (id, name, prompt string).
+     These must be migrated to the new 24-beat structured format.
+   - Fully migrate "bedtime-routine" to a new file /data/templates/bedtime-routine.json
+     with complete 24 beats, 3-act structure, moral, and vocabulary_constraints
+   - For the remaining 4 (adventure-quest, creative-day, friendship, nature-walk):
+     create skeleton JSON files with the beat structure (page numbers and short
+     beat descriptions) but mark them as "status": "skeleton" — detailed beat
+     text can be fleshed out in later sessions
+   - Rename the original templates.json to templates-v1-archived.json
+   - Create a new /data/templates/index.ts that exports a list of all available
+     templates by scanning the template directory for *.json files
+
+9. Update /tests/ with:
    - Type validation tests (Zod schemas accept valid data, reject invalid)
    - Template loading test (can load and parse kindergarten template)
    - API stub tests (each route returns 200 with correct shape)
+   - Template migration: all 6 template JSON files load and validate against schema
+   - Template index returns at least 6 templates
+   - Skeleton templates have status field set to "skeleton"
 
-9. Update tasks.md: mark Session 1 items as [x], note any issues found
+10. Update tasks.md: mark Session 1 items as [x], note any issues found
 
-10. Run /verify then /done
+11. Run /verify then /done
 
 ACCEPTANCE CRITERIA (all must pass):
 - [ ] pnpm build succeeds
@@ -200,6 +216,10 @@ ACCEPTANCE CRITERIA (all must pass):
 - [ ] All 6 API routes return 200 with typed mock data
 - [ ] Kindergarten template JSON is valid and loadable
 - [ ] Types compile with strict mode, no `any`
+- [ ] Existing 5 templates archived as templates-v1-archived.json
+- [ ] "bedtime-routine" template fully migrated to 24-beat format
+- [ ] 4 skeleton templates exist with valid structure (loadable, marked as skeleton)
+- [ ] Template index exports all available templates
 
 If you get stuck on anything, write to BLOCKED.md and stop.
 Do not ask me questions — make reasonable decisions and document them
@@ -258,6 +278,7 @@ DO THE FOLLOWING IN ORDER:
      generate image prompts → run compliance → save book JSON
    - Status tracking: updates book.status through the pipeline
    - Error handling: if any step fails, set status to 'error' with details
+   - Default sample generation should use language='bilingual' to exercise the full path
 
 8. Wire up API routes:
    POST /api/generate/outline — calls outline.ts
@@ -269,6 +290,7 @@ DO THE FOLLOWING IN ORDER:
    - Image prompts contain character description and exclude banned terms
    - Compliance checker catches "Conni" and "Pixi" in text
    - Book service orchestrates full pipeline in stub mode
+   - Bilingual mode: page text output contains both `en` and `de` fields with distinct content
 
 10. Run /verify then /done
 
@@ -278,6 +300,8 @@ ACCEPTANCE CRITERIA:
 - [ ] Book JSON contains: text (en + de), image prompts, compliance result
 - [ ] Compliance checker rejects text containing "Conni" or "Pixi"
 - [ ] No hardcoded API keys anywhere (all from env vars)
+- [ ] In stub mode with language='bilingual': each page contains both EN and DE text fields populated
+- [ ] Test verifies bilingual output has non-empty text in BOTH languages (not just one)
 
 DECISIONS TO MAKE YOURSELF:
 - Anthropic model: use claude-sonnet-4-20250514 for speed
@@ -502,6 +526,8 @@ DO THE FOLLOWING IN ORDER:
    - Each card: illustration placeholder, title, short description, recommended age
    - Selected state: highlighted border
    - If only 1 template exists, auto-select it but still show it
+   - Templates with "status": "skeleton" should show a "Coming Soon" badge
+     and be non-selectable (grayed out)
 
    Step 4 — CustomizeStep.tsx: "Make it yours"
    - Story-specific fields (loaded from template metadata):
@@ -767,6 +793,7 @@ DO THE FOLLOWING IN ORDER:
    - Config: name="Ahana", age=4, city="Ulm", template="kindergarten-first-day"
    - Family: Papa, baby sister Shreya
    - Companion: plush bunny named Hoppel
+   - Language: bilingual (both EN and DE)
    - Saves to /data/books/sample-ahana.json
    - Generates placeholder images to /public/generated/sample-ahana/
 
@@ -798,14 +825,21 @@ DO THE FOLLOWING IN ORDER:
    - Add any new mistakes discovered during integration
    - Update tasks.md with final status of all sessions
 
-8. Final verification:
+8. Update .github/workflows/ci.yml:
+   - Use pnpm (not npm) — add pnpm install step with caching
+   - Jobs: lint (pnpm lint), test (pnpm test), build (pnpm build)
+   - Node version: 20
+   - Trigger: push to main + pull requests
+   - Ensure the workflow matches what /verify runs locally
+
+9. Final verification:
    - pnpm lint (0 errors)
    - pnpm test (0 failures)
    - pnpm build (succeeds)
    - E2E test passes
    - Commit everything with: "feat: full integration and E2E verification"
 
-9. Run /done
+10. Run /done
 
 ACCEPTANCE CRITERIA:
 - [ ] Complete flow works: landing → register → create → generate → read → export
@@ -814,6 +848,7 @@ ACCEPTANCE CRITERIA:
 - [ ] No TypeScript errors, no lint errors, build succeeds
 - [ ] README accurately describes the project
 - [ ] BLOCKED.md documents any remaining issues for real AI integration
+- [ ] .github/workflows/ci.yml runs lint, test, and build using pnpm
 
 This is the final session for the POC. After this, the app should be
 demoable: someone can visit the site, create a book, read it, and
