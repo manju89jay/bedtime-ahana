@@ -20,7 +20,26 @@
 **Decision:** Each stub validates input with Zod schemas and returns 400 on invalid input, 200 with typed mock data on valid input.
 **Rationale:** Validates the schema definitions work correctly and provides proper error handling from the start.
 
-## Decision 5: Removed deprecated serverActions config
+## Decision 5: Removed deprecated serverActions config (Session 1)
 **Context:** `next.config.js` had `experimental: { serverActions: true }` which Next.js 14 warns about.
 **Decision:** Removed the deprecated config since server actions are stable in Next.js 14.
 **Rationale:** Eliminates build warning.
+
+---
+
+# Session 2
+
+## Decision 6: Lazy env check for USE_STUBS
+**Context:** AI adapter modules (outline, page-text, image-prompt, tts) need to check `process.env.USE_STUBS` to decide between stub and live mode.
+**Decision:** Used `const isStubMode = () => process.env.USE_STUBS === 'true'` (lazy function) instead of `const USE_STUBS = process.env.USE_STUBS === 'true'` (eager constant).
+**Rationale:** Eager evaluation captures the env value at module load time, which breaks in tests where env is set after import. Lazy evaluation reads at call time. Also avoids ESLint `react-hooks/rules-of-hooks` false positive (function names starting with `use`).
+
+## Decision 7: Compliance check as standalone module
+**Context:** The existing `lib/compliance.ts` works with legacy `Book` type. Session 2 needs a new compliance check working with the new `Page[]` + `StoryConfig` types.
+**Decision:** Created `lib/ai/compliance-check.ts` as a new module using new types, with all 6 checks (IP names, franchise motifs, age-appropriate, GDPR, cultural sensitivity, generic experiences). Kept the old `lib/compliance.ts` for legacy code.
+**Rationale:** Clean separation between old and new code. The new module implements the full `ComplianceResult` interface from `types/book.ts`.
+
+## Decision 8: Sequential page text generation
+**Context:** The `generateAllPageTexts` function could generate all 24 pages in parallel or sequentially.
+**Decision:** Used sequential generation (for-loop) instead of `Promise.all`.
+**Rationale:** In live mode, parallel calls to Claude would hit rate limits. Sequential is safer and allows context from earlier pages to inform later ones. In stub mode, the overhead is negligible.

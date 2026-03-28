@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { TtsRequestSchema } from '@/lib/validation/api';
-import type { TtsResponse } from '@/types/api';
+import { generateTts } from '@/lib/ai/tts';
 
 export const runtime = 'nodejs';
 
@@ -11,9 +11,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const stub: TtsResponse = {
-    audioUrl: `/generated/stubs/tts-${parsed.data.language}.mp3`,
-  };
-
-  return NextResponse.json(stub);
+  try {
+    const result = await generateTts({
+      text: parsed.data.text,
+      language: parsed.data.language,
+      pageNumber: 1,
+      bookId: 'api-call',
+    });
+    return NextResponse.json({ audioUrl: result.audioUrl });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'TTS generation failed';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

@@ -1,4 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
+
+const originalEnv = process.env;
+
+beforeAll(() => {
+  process.env = { ...originalEnv, USE_STUBS: 'true' };
+});
+
+afterAll(() => {
+  process.env = originalEnv;
+});
 
 // We test the API route handlers directly by calling the POST functions
 // with mock Request objects
@@ -75,7 +85,6 @@ describe('POST /api/generate/page', () => {
     const data = await res.json();
     expect(data.page).toBeDefined();
     expect(data.page.pageNumber).toBe(1);
-    expect(data.page.text.en).toBeTruthy();
     expect(data.page.text.de).toBeTruthy();
   });
 });

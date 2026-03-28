@@ -22,15 +22,15 @@
 - [x] pnpm build succeeds, pnpm test passes, pnpm lint clean
 
 ## SESSION 2: Story Generation Engine
-- [ ] Implement /lib/ai/outline.ts (stub + live mode)
-- [ ] Implement /lib/ai/page-text.ts with bilingual EN/DE support
-- [ ] Implement /lib/ai/image-prompt.ts with character anchoring
-- [ ] Implement /lib/ai/compliance.ts (rule-based, 6 checks)
-- [ ] Implement /lib/ai/tts.ts (stub: silent MP3, live: ElevenLabs)
-- [ ] Implement /lib/services/book-service.ts (full pipeline orchestration)
-- [ ] Wire API routes: /api/generate/outline, /page, /tts
-- [ ] Write tests: outline structure, word counts, compliance, bilingual, TTS
-- [ ] Stub mode generates complete 24-page bilingual book JSON with audioUrls
+- [x] Implement /lib/ai/outline.ts (stub + live mode)
+- [x] Implement /lib/ai/page-text.ts with bilingual EN/DE support
+- [x] Implement /lib/ai/image-prompt.ts with character anchoring
+- [x] Implement /lib/ai/compliance-check.ts (rule-based, 6 checks)
+- [x] Implement /lib/ai/tts.ts (stub: silent MP3, live: ElevenLabs)
+- [x] Implement /lib/services/book-service.ts (full pipeline orchestration)
+- [x] Wire API routes: /api/generate/outline, /page, /tts
+- [x] Write tests: outline structure, word counts, compliance, bilingual, TTS
+- [x] Stub mode generates complete 24-page bilingual book JSON with audioUrls
 
 ## SESSION 3: Character Sheet & Image Generation (Stub Mode)
 - [ ] Implement /lib/ai/face-detect.ts (stub)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PageRequestSchema } from '@/lib/validation/api';
-import type { PageResponse } from '@/types/api';
+import { generatePageText } from '@/lib/ai/page-text';
 
 export const runtime = 'nodejs';
 
@@ -11,17 +11,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const stub: PageResponse = {
-    page: {
+  try {
+    const result = await generatePageText({
+      config: parsed.data.config,
+      outline: parsed.data.outline,
       pageNumber: parsed.data.pageNumber,
-      text: {
-        en: `Stub text for page ${parsed.data.pageNumber} in English.`,
-        de: `Stub-Text fuer Seite ${parsed.data.pageNumber} auf Deutsch.`,
-      },
-      imagePrompt: `Illustration for page ${parsed.data.pageNumber}`,
-      imageUrl: `/generated/stubs/page-${parsed.data.pageNumber}.svg`,
-    },
-  };
+    });
 
-  return NextResponse.json(stub);
+    return NextResponse.json({
+      page: {
+        pageNumber: result.pageNumber,
+        text: result.text,
+        imagePrompt: `Illustration for page ${result.pageNumber}`,
+        imageUrl: '',
+      },
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Page generation failed';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
