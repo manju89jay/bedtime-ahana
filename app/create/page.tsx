@@ -1,177 +1,173 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChildInfoForm } from "@/components/Form";
-import { TemplatePicker } from "@/components/TemplatePicker";
-import { GenerationProgress } from "@/components/Progress";
-import { Banner } from "@/components/Banner";
-import type { LegacyChildProfile as ChildProfile, LegacyStoryTemplate as StoryTemplate } from "@/types/legacy";
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
+import { ChildProfileStep, type ChildProfileData } from '@/components/wizard/ChildProfileStep';
+import { FamilyStep, type FamilyData } from '@/components/wizard/FamilyStep';
+import { StorySelectStep } from '@/components/wizard/StorySelectStep';
+import { CustomizeStep, type CustomizeData } from '@/components/wizard/CustomizeStep';
+import { GenerateStep } from '@/components/wizard/GenerateStep';
+import { getTemplates } from '@/data/templates/index';
+import { Banner } from '@/components/Banner';
 
-import templates from "@/data/templates/templates-v1-archived.json";
+type WizardStep = 'profile' | 'family' | 'story' | 'customize' | 'generate';
 
-type Step = { label: string; status: "pending" | "active" | "done" };
+const STEP_LABELS: { key: WizardStep; label: string }[] = [
+  { key: 'profile', label: '1. Profile' },
+  { key: 'family', label: '2. Family' },
+  { key: 'story', label: '3. Story' },
+  { key: 'customize', label: '4. Customize' },
+  { key: 'generate', label: '5. Generate' },
+];
 
 export default function CreatePage() {
   const router = useRouter();
-  const [step, setStep] = useState<"info" | "story" | "generating">("info");
-  const [childProfile, setChildProfile] = useState<ChildProfile | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<StoryTemplate | null>(null);
-  const [customIdea, setCustomIdea] = useState("");
+  const [step, setStep] = useState<WizardStep>('profile');
+  const [profileData, setProfileData] = useState<ChildProfileData | null>(null);
+  const [familyData, setFamilyData] = useState<FamilyData | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [customizeData, setCustomizeData] = useState<CustomizeData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [progressSteps, setProgressSteps] = useState<Step[]>([]);
 
-  const handleChildSubmit = (profile: ChildProfile) => {
-    setChildProfile(profile);
-    setStep("story");
-  };
+  const templates = getTemplates();
+  const stepIndex = STEP_LABELS.findIndex((s) => s.key === step);
 
-  const handleGenerate = async () => {
-    if (!childProfile) return;
-
-    setStep("generating");
-    setError(null);
-    setProgressSteps([
-      { label: "Writing your story...", status: "active" },
-      { label: "Creating illustrations...", status: "pending" },
-      { label: "Assembling your book...", status: "pending" }
-    ]);
-
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          childProfile,
-          templateId: selectedTemplate?.id,
-          storyIdea: customIdea || undefined,
-          templatePrompt: selectedTemplate?.prompt
-        })
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Generation failed");
-      }
-
-      setProgressSteps([
-        { label: "Writing your story...", status: "done" },
-        { label: "Creating illustrations...", status: "done" },
-        { label: "Assembling your book...", status: "done" }
-      ]);
-
-      const { book } = await res.json();
-
-      // Brief pause so user sees completion state
-      await new Promise((r) => setTimeout(r, 600));
-      router.push(`/reader/${book.bookId}`);
-    } catch (e: any) {
-      setError(e.message || "Something went wrong. Please try again.");
-      setStep("story");
+  const handleGenerate = useCallback(async (): Promise<string> => {
+    if (!profileData || !familyData || !selectedTemplate || !customizeData) {
+      throw new Error('Missing wizard data');
     }
-  };
+
+    const config = {
+      childName: profileData.name,
+      childAge: profileData.age,
+      childGender: profileData.gender,
+      characterRefId: 'cs-stub',
+      familyMembers: familyData.familyMembers,
+      petName: familyData.petName || undefined,
+      petType: familyData.petType,
+      city: profileData.city,
+      kindergartenName: customizeData.kindergartenName,
+      favoritePlayground: customizeData.favoritePlayground,
+      companionObject: profileData.companionObject || undefined,
+      language: profileData.language,
+      tonePreset: customizeData.tonePreset,
+      ageVocabulary: customizeData.ageVocabulary,
+    };
+
+    const res = await fetch('/api/generate/outline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config, templateId: selectedTemplate }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Generation failed');
+    }
+
+    await res.json();
+    return `book-${Date.now().toString(36)}`;
+  }, [profileData, familyData, selectedTemplate, customizeData]);
+
+  const handleComplete = useCallback(
+    (bookId: string) => {
+      router.push(`/reader/${bookId}`);
+    },
+    [router],
+  );
+
+  const handleError = useCallback((msg: string) => {
+    setError(msg);
+    setStep('customize');
+  }, []);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6" data-testid="create-wizard">
       {/* Step indicator */}
-      <div className="flex items-center gap-2 text-sm text-slate-400">
-        <span className={step === "info" ? "font-semibold text-brand-primary" : "text-slate-500"}>
-          1. Child Info
-        </span>
-        <span>→</span>
-        <span
-          className={
-            step === "story" || step === "generating"
-              ? "font-semibold text-brand-primary"
-              : ""
-          }
-        >
-          2. Choose Story
-        </span>
-        <span>→</span>
-        <span className={step === "generating" ? "font-semibold text-brand-primary" : ""}>
-          3. Your Book
-        </span>
+      <div className="flex items-center gap-1 text-sm" data-testid="step-indicator">
+        {STEP_LABELS.map((s, i) => (
+          <span key={s.key}>
+            {i > 0 && <span className="mx-1 text-slate-300">&rarr;</span>}
+            <span
+              className={clsx(
+                i === stepIndex ? 'font-semibold text-brand-primary' :
+                  i < stepIndex ? 'text-slate-500' : 'text-slate-300',
+              )}
+            >
+              {s.label}
+            </span>
+          </span>
+        ))}
       </div>
 
-      {/* Step 1: Child Info */}
-      {step === "info" && (
+      {error && <Banner tone="error" title="Error" description={error} />}
+
+      {/* Step 1: Child Profile */}
+      {step === 'profile' && (
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-slate-800">Tell us about your child</h2>
+          <p className="mb-6 text-sm text-slate-500">Name, age, outfit, and language preferences.</p>
+          <ChildProfileStep
+            initial={profileData ?? undefined}
+            onNext={(data) => { setProfileData(data); setStep('family'); }}
+          />
+        </div>
+      )}
+
+      {/* Step 2: Family */}
+      {step === 'family' && (
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-slate-800">Who is in the family?</h2>
+          <p className="mb-6 text-sm text-slate-500">Add family members who appear in the story.</p>
+          <FamilyStep
+            initial={familyData ?? undefined}
+            onNext={(data) => { setFamilyData(data); setStep('story'); }}
+            onBack={() => setStep('profile')}
+          />
+        </div>
+      )}
+
+      {/* Step 3: Story Selection */}
+      {step === 'story' && (
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-slate-800">
-            Tell us about your child
+            Pick a story{profileData ? ` for ${profileData.name}` : ''}
           </h2>
-          <p className="mb-6 text-sm text-slate-500">
-            We&apos;ll use this to personalize the story.
-          </p>
-          <ChildInfoForm onSubmit={handleChildSubmit} isDisabled={false} />
-        </div>
-      )}
-
-      {/* Step 2: Story Selection */}
-      {step === "story" && childProfile && (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-800">
-                Pick a story for {childProfile.name}
-              </h2>
-              <p className="text-sm text-slate-500">
-                Choose a template or write your own idea below.
-              </p>
-            </div>
-            <button
-              onClick={() => setStep("info")}
-              className="text-sm text-slate-400 hover:text-slate-600"
-            >
-              ← Back
-            </button>
-          </div>
-
-          <TemplatePicker
-            templates={templates as StoryTemplate[]}
-            selected={selectedTemplate?.id || null}
-            onSelect={(t) => {
-              setSelectedTemplate(t);
-              if (t) setCustomIdea("");
-            }}
+          <p className="mb-6 text-sm text-slate-500">Choose from our first-experiences library.</p>
+          <StorySelectStep
+            templates={templates}
+            selected={selectedTemplate}
+            onSelect={setSelectedTemplate}
+            onNext={() => setStep('customize')}
+            onBack={() => setStep('family')}
           />
-
-          <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-xs font-medium text-slate-400">OR</span>
-            <div className="h-px flex-1 bg-slate-200" />
-          </div>
-
-          <div className="rounded-xl bg-white p-6 shadow-sm">
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Write your own story idea
-            </label>
-            <textarea
-              rows={3}
-              className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
-              placeholder={`e.g. ${childProfile.name} finds a tiny dragon egg in the garden and has to keep it warm until it hatches`}
-              value={customIdea}
-              onChange={(e) => {
-                setCustomIdea(e.target.value);
-                if (e.target.value) setSelectedTemplate(null);
-              }}
-            />
-          </div>
-
-          {error && <Banner tone="error" title="Generation failed" description={error} />}
-
-          <button
-            onClick={handleGenerate}
-            disabled={!selectedTemplate && !customIdea.trim()}
-            className="self-end rounded-lg bg-brand-primary px-8 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
-          >
-            Create Book
-          </button>
         </div>
       )}
 
-      {/* Step 3: Generating */}
-      {step === "generating" && <GenerationProgress steps={progressSteps} />}
+      {/* Step 4: Customize */}
+      {step === 'customize' && profileData && selectedTemplate && (
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-slate-800">Customize the story</h2>
+          <p className="mb-6 text-sm text-slate-500">Set the tone and vocabulary level.</p>
+          <CustomizeStep
+            childAge={profileData.age}
+            templateId={selectedTemplate}
+            initial={customizeData ?? undefined}
+            onNext={(data) => { setCustomizeData(data); setError(null); setStep('generate'); }}
+            onBack={() => setStep('story')}
+          />
+        </div>
+      )}
+
+      {/* Step 5: Generate */}
+      {step === 'generate' && (
+        <GenerateStep
+          onGenerate={handleGenerate}
+          onComplete={handleComplete}
+          onError={handleError}
+        />
+      )}
     </div>
   );
 }

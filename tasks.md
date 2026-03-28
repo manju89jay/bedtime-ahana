@@ -54,16 +54,16 @@
 - [x] Mobile responsive at 375px width
 
 ## SESSION 5: Book Creation Wizard
-- [ ] Build ChildProfileStep.tsx (name, age, gender, city, photo, companion, outfit, language)
-- [ ] Build FamilyStep.tsx (dynamic family members, pet)
-- [ ] Build StorySelectStep.tsx (grid of 6 templates)
-- [ ] Build CustomizeStep.tsx (story-specific fields, tone selector)
-- [ ] Build GenerateStep.tsx (API calls, progress bar, completion)
-- [ ] Build page at /app/create/page.tsx
-- [ ] Add navigation links (landing -> create, reader -> create, bookshelf -> create)
-- [ ] Form validation (name required, template selected, family member required)
-- [ ] Write tests: wizard flow, validation, template grid, generation, redirect
-- [ ] Outfit selector with predefined options and visual preview
+- [x] Build ChildProfileStep.tsx (name, age, gender, city, photo, companion, outfit, language)
+- [x] Build FamilyStep.tsx (dynamic family members, pet)
+- [x] Build StorySelectStep.tsx (grid of 6 templates)
+- [x] Build CustomizeStep.tsx (story-specific fields, tone selector)
+- [x] Build GenerateStep.tsx (API calls, progress bar, completion)
+- [x] Build page at /app/create/page.tsx
+- [x] Add navigation links (landing -> create, reader -> create, bookshelf -> create)
+- [x] Form validation (name required, template selected, family member required)
+- [x] Write tests: wizard flow, validation, template grid, generation, redirect
+- [x] Outfit selector with predefined options and visual preview
 
 ## SESSION 6: PDF Export & Print Pipeline
 - [ ] Implement exportScreenPDF (A5, 150 DPI, watermark for free tier)
