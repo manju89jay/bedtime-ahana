@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ChildProfile } from "@/types/book";
+import type { LegacyChildProfile as ChildProfile } from "@/types/legacy";
 
 export function ChildInfoForm({
   onSubmit,

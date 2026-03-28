@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ReaderNav } from "@/components/ReaderNav";
 import { loadBook, saveBook, getPublicAssetPath, getPublicAssetUrl } from "@/lib/storage";
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 import { promises as fs } from "fs";
 
 export const dynamic = "force-dynamic";

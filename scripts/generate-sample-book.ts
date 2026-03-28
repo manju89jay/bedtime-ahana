@@ -4,7 +4,7 @@ import { jsPDF } from "jspdf";
 import { writePlaceholderImage, generateCoverImage } from "../lib/ai/image";
 import { generateStoryFallback } from "../lib/ai/text";
 import { getPublicAssetPath, saveBook } from "../lib/storage";
-import type { Book, Page } from "../types/book";
+import type { LegacyBook as Book, LegacyPage as Page } from "../types/legacy";
 
 const SAMPLE_BOOK_ID = "sample-ahana";
 

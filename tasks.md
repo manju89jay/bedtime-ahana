@@ -7,19 +7,19 @@
 - [!] Blocked
 
 ## SESSION 1: Project Foundation
-- [ ] Read existing codebase and understand current state
-- [ ] Read docs/bedtime-ahana-spec-v2.md
-- [ ] Create/update all TypeScript interfaces in /types/ (book, character, user, template, api, order)
-- [ ] Create Zod schemas in /lib/validation/ matching every type
-- [ ] Create API route stubs for all 6 endpoints (character, outline, page, image, tts, export)
-- [ ] Set up Zustand stores (book-store, user-store) with sessionStorage persistence
-- [ ] Create i18n utility (/lib/utils/i18n.ts) with EN/DE translations
-- [ ] Create kindergarten-first-day.json template (24 beats from spec)
-- [ ] Create 5 more Tier 1 templates: zahnarzt, fahrrad, geschwisterchen, schwimmbad, muellabfuhr
-- [ ] Archive old templates.json as templates-v1-archived.json
-- [ ] Create template index (/data/templates/index.ts)
-- [ ] Write tests: type validation, template loading, API stubs, Zustand, i18n
-- [ ] pnpm build succeeds, pnpm test passes, pnpm lint clean
+- [x] Read existing codebase and understand current state
+- [x] Read docs/bedtime-ahana-spec-v2.md
+- [x] Create/update all TypeScript interfaces in /types/ (book, character, user, template, api, order)
+- [x] Create Zod schemas in /lib/validation/ matching every type
+- [x] Create API route stubs for all 6 endpoints (character, outline, page, image, tts, export)
+- [x] Set up Zustand stores (book-store, user-store) with sessionStorage persistence
+- [x] Create i18n utility (/lib/utils/i18n.ts) with EN/DE translations
+- [x] Create kindergarten-first-day.json template (24 beats from spec)
+- [x] Create 5 more Tier 1 templates: zahnarzt, fahrrad, geschwisterchen, schwimmbad, muellabfuhr
+- [x] Archive old templates.json as templates-v1-archived.json
+- [x] Create template index (/data/templates/index.ts)
+- [x] Write tests: type validation, template loading, API stubs, Zustand, i18n
+- [x] pnpm build succeeds, pnpm test passes, pnpm lint clean
 
 ## SESSION 2: Story Generation Engine
 - [ ] Implement /lib/ai/outline.ts (stub + live mode)
@@ -60,7 +60,7 @@
 - [ ] Build CustomizeStep.tsx (story-specific fields, tone selector)
 - [ ] Build GenerateStep.tsx (API calls, progress bar, completion)
 - [ ] Build page at /app/create/page.tsx
-- [ ] Add navigation links (landing → create, reader → create, bookshelf → create)
+- [ ] Add navigation links (landing -> create, reader -> create, bookshelf -> create)
 - [ ] Form validation (name required, template selected, family member required)
 - [ ] Write tests: wizard flow, validation, template grid, generation, redirect
 - [ ] Outfit selector with predefined options and visual preview

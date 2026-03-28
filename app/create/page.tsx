@@ -6,9 +6,9 @@ import { ChildInfoForm } from "@/components/Form";
 import { TemplatePicker } from "@/components/TemplatePicker";
 import { GenerationProgress } from "@/components/Progress";
 import { Banner } from "@/components/Banner";
-import type { ChildProfile, StoryTemplate } from "@/types/book";
+import type { LegacyChildProfile as ChildProfile, LegacyStoryTemplate as StoryTemplate } from "@/types/legacy";
 
-import templates from "@/data/templates/templates.json";
+import templates from "@/data/templates/templates-v1-archived.json";
 
 type Step = { label: string; status: "pending" | "active" | "done" };
 

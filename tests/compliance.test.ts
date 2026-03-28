@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { checkBookForIPRisks } from "@/lib/compliance";
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 
 const createBook = (text: string): Book => ({
   bookId: "sample",

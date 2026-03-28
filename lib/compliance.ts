@@ -1,4 +1,4 @@
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 
 const FORBIDDEN_TOKENS = [
   "conni",
