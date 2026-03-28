@@ -86,11 +86,11 @@
 - [x] Responsive landing page (375px and 1280px)
 
 ## SESSION 8: Integration & Full Flow Test
-- [ ] Navigate and fix all pages end-to-end
-- [ ] Fix integration issues (types, navigation, loading/error states)
-- [ ] Create /scripts/generate-sample.ts (Ahana, bilingual, kindergarten)
-- [ ] Write Playwright E2E test (full happy path)
-- [ ] Update README.md
-- [ ] Update .github/workflows/ci.yml (pnpm, lint, test, build)
-- [ ] Review CLAUDE.md and lessons.md
-- [ ] Final verification: lint + test + build + E2E all pass
+- [x] Navigate and fix all pages end-to-end
+- [x] Fix integration issues (types, navigation, loading/error states)
+- [x] Create /scripts/generate-sample.ts (Ahana, bilingual, kindergarten)
+- [x] Write Playwright E2E test (full happy path)
+- [x] Update README.md
+- [x] Update .github/workflows/ci.yml (pnpm, lint, test, build)
+- [x] Review CLAUDE.md and lessons.md
+- [x] Final verification: lint + test + build + E2E all pass

@@ -14,8 +14,9 @@ const FRANCHISE_MOTIFS = [
 
 const INAPPROPRIATE_CONTENT = [
   'blood', 'kill', 'murder', 'weapon', 'gun', 'knife',
-  'violence', 'death', 'die', 'dead', 'horror', 'nightmare',
+  'violence', 'death', 'dead', 'horror', 'nightmare',
   'abuse', 'drug', 'alcohol', 'cigarette', 'sexy', 'naked',
+  // Note: 'die' excluded — it's the most common German article
 ];
 
 const CULTURAL_INSENSITIVE = [
@@ -25,7 +26,10 @@ const CULTURAL_INSENSITIVE = [
 
 function searchText(haystack: string, needles: string[]): string[] {
   const lower = haystack.toLowerCase();
-  return needles.filter((needle) => lower.includes(needle));
+  return needles.filter((needle) => {
+    const regex = new RegExp(`\\b${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+    return regex.test(lower);
+  });
 }
 
 export function checkCompliance(

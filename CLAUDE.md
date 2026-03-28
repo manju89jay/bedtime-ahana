@@ -57,4 +57,10 @@ Next.js 14 + TypeScript + Tailwind. The child is the main character.
 
 ## Common Mistakes Log
 (UPDATE THIS AFTER EVERY FIX — append, never delete)
-- [empty — will be populated as sessions run]
+- S1: `useStubs()` function name triggers ESLint react-hooks/rules-of-hooks — renamed to `isStubMode()`
+- S1: Eager env constant `const USE_STUBS = process.env.USE_STUBS` captures value at module load, breaks tests — use lazy `const isStubMode = () => process.env.USE_STUBS === 'true'`
+- S3: `Buffer` not assignable to `fs.writeFile` param in strict TS — wrap with `new Uint8Array(data)`
+- S4: JSX test files need `@vitest-environment jsdom` directive + `esbuild.jsx: 'automatic'` in vitest config
+- S4: Testing Library needs explicit `afterEach(cleanup)` to avoid cross-test DOM leakage
+- S4: Mock factories for next/link and framer-motion must use `require('react')` inside the factory, not top-level JSX
+- S7: NextAuth v4 middleware uses `withAuth` from `next-auth/middleware`
