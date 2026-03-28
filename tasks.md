@@ -66,14 +66,14 @@
 - [x] Outfit selector with predefined options and visual preview
 
 ## SESSION 6: PDF Export & Print Pipeline
-- [ ] Implement exportScreenPDF (A5, 150 DPI, watermark for free tier)
-- [ ] Implement exportPrintPDF for 10x10cm (300 DPI, 3mm bleed, trim marks)
-- [ ] Implement exportPrintPDF for 15x15cm (300 DPI, 3mm bleed, trim marks)
-- [ ] Wire API route: POST /api/export (screen, print-10x10, print-15x15)
-- [ ] Add export dropdown to reader (3 options)
-- [ ] Implement /lib/services/print-order.ts (Gelato stub)
-- [ ] Write tests: PDF magic bytes, page dimensions, watermark, print order
-- [ ] Free tier PDFs have watermark, paid tier PDFs don't
+- [x] Implement exportScreenPDF (A5, 150 DPI, watermark for free tier)
+- [x] Implement exportPrintPDF for 10x10cm (300 DPI, 3mm bleed, trim marks)
+- [x] Implement exportPrintPDF for 15x15cm (300 DPI, 3mm bleed, trim marks)
+- [x] Wire API route: POST /api/export (screen, print-10x10, print-15x15)
+- [x] Add export dropdown to reader (3 options)
+- [x] Implement /lib/services/print-order.ts (Gelato stub)
+- [x] Write tests: PDF magic bytes, page dimensions, watermark, print order
+- [x] Free tier PDFs have watermark, paid tier PDFs don't
 
 ## SESSION 7: Auth, Payments & Landing Page
 - [ ] Set up NextAuth.js (email/password, JWT sessions)

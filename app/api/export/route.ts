@@ -1,8 +1,23 @@
 import { NextResponse } from 'next/server';
 import { ExportRequestSchema } from '@/lib/validation/api';
-import type { ExportResponse } from '@/types/api';
+import { exportPDF } from '@/lib/services/pdf-export';
+import { saveAsset } from '@/lib/services/asset-storage';
+import type { Book } from '@/types/book';
+import type { SubscriptionTier } from '@/types/user';
 
 export const runtime = 'nodejs';
+
+async function loadBookById(bookId: string): Promise<Book | null> {
+  const { promises: fs } = await import('fs');
+  const path = await import('path');
+  try {
+    const filePath = path.join(process.cwd(), 'data', 'books', `${bookId}.json`);
+    const raw = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(raw) as Book;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -11,9 +26,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const stub: ExportResponse = {
-    pdfUrl: `/generated/${parsed.data.bookId}/book-${parsed.data.format}.pdf`,
-  };
+  const { bookId, format } = parsed.data;
 
-  return NextResponse.json(stub);
+  // Try to load the book; if not found, generate a stub PDF
+  const book = await loadBookById(bookId);
+  if (!book) {
+    // Return stub URL for now
+    return NextResponse.json({ pdfUrl: `/generated/${bookId}/book-${format}.pdf` });
+  }
+
+  // Default to free tier (auth will be added in Session 7)
+  const subscription: SubscriptionTier = 'free';
+
+  const result = exportPDF({ book, format, subscription });
+
+  const fileName = `${bookId}/book-${format}.pdf`;
+  const pdfUrl = await saveAsset(fileName, Buffer.from(result.pdfBytes));
+
+  return NextResponse.json({ pdfUrl });
 }

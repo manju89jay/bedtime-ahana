@@ -5,6 +5,7 @@ import { PageView } from './PageView';
 import { PageTurn } from './PageTurn';
 import { TextOverlay } from './TextOverlay';
 import { AudioPlayer } from './AudioPlayer';
+import { ExportDropdown } from './ExportDropdown';
 import clsx from 'clsx';
 import type { Book, Page } from '@/types/book';
 
@@ -105,8 +106,11 @@ export const BookReader = ({ book, onSaveEdit }: BookReaderProps) => {
         onTextChange={handleTextChange}
       />
 
-      {/* Audio player */}
-      <AudioPlayer audioUrl={currentPage.audioUrl} nightMode={nightMode} />
+      {/* Audio + Export row */}
+      <div className="flex items-center justify-between">
+        <AudioPlayer audioUrl={currentPage.audioUrl} nightMode={nightMode} />
+        <ExportDropdown bookId={book.id} nightMode={nightMode} />
+      </div>
 
       {/* Thumbnail strip */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 sm:gap-2">
