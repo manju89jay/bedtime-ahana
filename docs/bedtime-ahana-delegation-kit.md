@@ -170,6 +170,8 @@ DO THE FOLLOWING IN ORDER:
    /types/user.ts — User, Subscription types
    /types/template.ts — StoryTemplate, Beat, StoryConfig interfaces
    /types/api.ts — API request/response types for all endpoints
+   /types/order.ts — PrintOrder, Address, OrderStatus interfaces
+     (format '10x10'|'15x15', quantity, shippingAddress, printProvider, status, trackingUrl)
 
 5. Create Zod schemas in /lib/validation/ matching every type above
 
@@ -181,45 +183,104 @@ DO THE FOLLOWING IN ORDER:
    POST /api/generate/tts — accepts page text, returns audio URL
    POST /api/export — accepts book ID, returns PDF URL
 
-7. Create /data/templates/kindergarten-first-day.json with all 24 beats
-   (see the story template structure — page beats for "Erster Tag im Kindergarten")
+7. Set up Zustand store:
+   - Install: pnpm add zustand
+   - Create /lib/store/book-store.ts:
+     - currentChild: ChildProfile | null
+     - currentBook: Book | null
+     - generationStatus: 'idle' | 'generating' | 'complete' | 'error'
+     - setChild, setBook, setStatus actions
+   - Create /lib/store/user-store.ts:
+     - user: User | null
+     - subscription: SubscriptionTier
+     - setUser, setSubscription actions
+   - Both stores persist to sessionStorage (zustand/middleware)
 
-8. Migrate existing templates in /data/templates/templates.json:
-   - The current file has 5 templates in a flat format (id, name, prompt string).
-     These must be migrated to the new 24-beat structured format.
-   - Fully migrate "bedtime-routine" to a new file /data/templates/bedtime-routine.json
-     with complete 24 beats, 3-act structure, moral, and vocabulary_constraints
-   - For the remaining 4 (adventure-quest, creative-day, friendship, nature-walk):
-     create skeleton JSON files with the beat structure (page numbers and short
-     beat descriptions) but mark them as "status": "skeleton" — detailed beat
-     text can be fleshed out in later sessions
-   - Rename the original templates.json to templates-v1-archived.json
-   - Create a new /data/templates/index.ts that exports a list of all available
-     templates by scanning the template directory for *.json files
+8. Create /lib/utils/i18n.ts — Simple i18n utility:
+   - Export `t(key: string, lang: 'en' | 'de'): string`
+   - Store translations as EN/DE objects:
+     { en: { 'create.title': 'Create a Book', ... }, de: { 'create.title': 'Buch erstellen', ... } }
+   - Cover all UI strings: buttons, labels, headings, error messages, wizard steps
+   - Components use `t('key', language)` instead of hardcoded strings
 
-9. Update /tests/ with:
-   - Type validation tests (Zod schemas accept valid data, reject invalid)
-   - Template loading test (can load and parse kindergarten template)
-   - API stub tests (each route returns 200 with correct shape)
-   - Template migration: all 6 template JSON files load and validate against schema
-   - Template index returns at least 6 templates
-   - Skeleton templates have status field set to "skeleton"
+9. Create /data/templates/kindergarten-first-day.json with all 24 beats
+   (copy the complete beat structure from docs/bedtime-ahana-spec-v2.md section 4.2)
 
-10. Update tasks.md: mark Session 1 items as [x], note any issues found
+10. Create 5 more Tier 1 "first experiences" template files, each with COMPLETE
+   24 beats in the same format as kindergarten-first-day.json:
 
-11. Run /verify then /done
+   /data/templates/zahnarzt.json
+   - Theme: First dentist visit. Moral: "Bravery and self-care"
+   - 3-act structure: Act 1 (pages 1-6): morning, toothache/checkup day,
+     driving to dentist, arriving, waiting room, meeting the dentist
+     Act 2 (pages 7-18): the examination, tools explanation, being brave,
+     X-ray, cleaning, companion object for comfort, reward sticker, etc.
+     Act 3 (pages 19-24): leaving happy, telling family, brushing teeth at bedtime
+
+   /data/templates/fahrrad.json
+   - Theme: Learning to ride a bike. Moral: "Persistence and practice"
+   - 3-act structure: getting the bike, training wheels, falling down,
+     trying again, finally riding free, celebrating with family
+
+   /data/templates/geschwisterchen.json
+   - Theme: New baby sibling. Moral: "Sharing love, being a big helper"
+   - 3-act structure: mama's belly growing, hospital visit, meeting baby,
+     jealousy/adjustment, learning to help, pride in being big sibling
+
+   /data/templates/schwimmbad.json
+   - Theme: First swimming pool visit. Moral: "Water safety, trying new things"
+   - 3-act structure: packing swim bag, arriving at pool, changing rooms,
+     first steps in water, learning to float, fun with family
+
+   /data/templates/muellabfuhr.json
+   - Theme: Garbage truck day. Moral: "Community helpers, environment"
+   - 3-act structure: hearing the truck, watching from window, meeting
+     the driver, learning about recycling, helping with bins, wanting
+     to be a garbage collector
+
+   For each template, generate ALL 24 beats following the kindergarten pattern:
+   - Use {name}, {parent}, {city}, {companion} personalization slots
+   - Include vocabulary_constraints for toddler/preschool/early-reader
+   - Include the moral statement
+   - Include 3-act page ranges matching: act1[1-6], act2[7-18], act3[19-24]
+
+   IMPORTANT: Each beat must be specific and visual (not vague). Think about
+   what illustration would be on that page. Study the kindergarten beats as
+   the quality reference.
+
+11. Archive existing templates:
+    - Rename /data/templates/templates.json to /data/templates/templates-v1-archived.json
+    - Create /data/templates/index.ts that exports all available templates
+      by scanning the template directory for *.json files (excluding archived)
+
+12. Update /tests/ with:
+    - Type validation tests (Zod schemas accept valid data, reject invalid)
+    - All 6 template JSON files load and validate against the StoryTemplate schema
+    - Each template has exactly 24 beats with page numbers 1-24
+    - Each template has act structure with correct page ranges
+    - Each template has moral and vocabulary_constraints fields
+    - Template index returns exactly 6 templates
+    - API stub tests (each route returns 200 with correct shape)
+    - Zustand stores initialize with correct default state
+    - i18n t() function returns correct strings for both EN and DE
+
+13. Update tasks.md: mark Session 1 items as [x], note any issues found
+
+14. Run /verify then /done
 
 ACCEPTANCE CRITERIA (all must pass):
 - [ ] pnpm build succeeds
 - [ ] pnpm test has 0 failures
 - [ ] pnpm lint has 0 errors
 - [ ] All 6 API routes return 200 with typed mock data
-- [ ] Kindergarten template JSON is valid and loadable
+- [ ] All 6 Tier 1 template JSON files exist with complete 24 beats each
+- [ ] Each template validates against StoryTemplate Zod schema
 - [ ] Types compile with strict mode, no `any`
-- [ ] Existing 5 templates archived as templates-v1-archived.json
-- [ ] "bedtime-routine" template fully migrated to 24-beat format
-- [ ] 4 skeleton templates exist with valid structure (loadable, marked as skeleton)
-- [ ] Template index exports all available templates
+- [ ] Old templates.json archived as templates-v1-archived.json
+- [ ] Template index exports all 6 templates
+- [ ] Zustand stores (book-store, user-store) initialize and update correctly
+- [ ] i18n utility exports t() function with EN and DE translations
+- [ ] PrintOrder and Address types defined in /types/order.ts
 
 If you get stuck on anything, write to BLOCKED.md and stop.
 Do not ask me questions — make reasonable decisions and document them
@@ -273,35 +334,50 @@ DO THE FOLLOWING IN ORDER:
    - Returns: ComplianceResult with pass/fail and specific warnings
    - This should work in both stub and live mode (it's rule-based, not AI)
 
-7. Implement /lib/services/book-service.ts:
+7. Implement /lib/ai/tts.ts (STUB + LIVE):
+   - Input: page text string + language ('en' | 'de')
+   - Output: audio URL (path to audio file)
+   - Stub mode: return a pre-generated silent MP3 placeholder file
+     (create a minimal valid MP3 at /public/audio/placeholder.mp3)
+   - Live mode: call ElevenLabs API with text, save audio to storage
+   - Must support both EN and DE voices
+   - Export: generateTTS(text: string, language: string): Promise<string>
+
+8. Implement /lib/services/book-service.ts:
    - Orchestrates: load template → generate outline → generate page texts →
-     generate image prompts → run compliance → save book JSON
+     generate image prompts → generate TTS audio → run compliance → save book JSON
+   - After image prompt generation: call TTS for each page text
+   - Store audio URLs in Page.audioUrl field
    - Status tracking: updates book.status through the pipeline
    - Error handling: if any step fails, set status to 'error' with details
    - Default sample generation should use language='bilingual' to exercise the full path
 
-8. Wire up API routes:
+9. Wire up API routes:
    POST /api/generate/outline — calls outline.ts
    POST /api/generate/page — calls page-text.ts
+   POST /api/generate/tts — calls tts.ts
 
-9. Write tests:
-   - Outline generator produces 24 pages with correct structure
-   - Page text respects word count constraints per age group
-   - Image prompts contain character description and exclude banned terms
-   - Compliance checker catches "Conni" and "Pixi" in text
-   - Book service orchestrates full pipeline in stub mode
-   - Bilingual mode: page text output contains both `en` and `de` fields with distinct content
+10. Write tests:
+    - Outline generator produces 24 pages with correct structure
+    - Page text respects word count constraints per age group
+    - Image prompts contain character description and exclude banned terms
+    - Compliance checker catches "Conni" and "Pixi" in text
+    - TTS stub returns a valid audio URL for each page
+    - Book service orchestrates full pipeline in stub mode
+    - Bilingual mode: page text output contains both `en` and `de` fields with distinct content
 
-10. Run /verify then /done
+11. Run /verify then /done
 
 ACCEPTANCE CRITERIA:
 - [ ] `pnpm test` passes with all new tests
 - [ ] In stub mode: can generate a complete 24-page book JSON from kindergarten template
-- [ ] Book JSON contains: text (en + de), image prompts, compliance result
+- [ ] Book JSON contains: text (en + de), image prompts, audioUrl, compliance result
 - [ ] Compliance checker rejects text containing "Conni" or "Pixi"
 - [ ] No hardcoded API keys anywhere (all from env vars)
 - [ ] In stub mode with language='bilingual': each page contains both EN and DE text fields populated
 - [ ] Test verifies bilingual output has non-empty text in BOTH languages (not just one)
+- [ ] TTS stub produces audio URLs for all 24 pages
+- [ ] Book JSON includes audioUrl per page
 
 DECISIONS TO MAKE YOURSELF:
 - Anthropic model: use claude-sonnet-4-20250514 for speed
@@ -413,6 +489,10 @@ DO THE FOLLOWING IN ORDER:
    - Font: system-ui or Nunito (install @fontsource/nunito if available)
    - Text size responsive to container
    - Page number in bottom corner (small, subtle)
+   - Tap/click illustration to zoom to full-screen view
+   - Pinch-to-zoom on mobile (touch events)
+   - Click outside or X button to close zoom view
+   - Use Framer Motion for smooth zoom transition
 
    PageTurn.tsx:
    - Wraps PageView with page-turn animation
@@ -440,6 +520,9 @@ DO THE FOLLOWING IN ORDER:
    - Header: book title, close button
    - Night mode toggle (shifts to warm amber tones, reduces brightness)
    - Loading state: skeleton with pulsing book shape
+   - Inline text editing: parent can click text overlay to edit wording per page
+   - Save edited text back to book JSON via API
+   - Visual indicator that text has been customized (small "edited" badge)
 
 5. Build the reader page at /app/reader/[bookId]/page.tsx:
    - Loads book from /data/books/{bookId}.json (or API)
@@ -478,6 +561,9 @@ ACCEPTANCE CRITERIA:
 - [ ] Bookshelf shows book covers in a grid
 - [ ] Reader loads sample-ahana book (or any book JSON in /data/books/)
 - [ ] Mobile responsive: usable at 375px width
+- [ ] Parent can edit page text inline and save changes
+- [ ] Tapping illustration opens full-screen zoom view
+- [ ] Zoom can be dismissed (click outside or X button)
 
 DESIGN DIRECTION: Warm, soft, parent-friendly. Think Scandinavian
 children's app — not Silicon Valley tech demo. Muted warm colors,
@@ -512,6 +598,10 @@ DO THE FOLLOWING IN ORDER:
      Show preview of uploaded photo
      Label: "Upload 1-3 photos of your child (used to create their book character)"
    - Companion object: name + type (text + select: bunny, teddy, cat, dog, dinosaur, other)
+   - Signature outfit (select from predefined options with preview icons):
+     Yellow raincoat, Star t-shirt, Striped dress, Denim overalls,
+     Red hoodie, Polka dot shirt
+     This outfit appears on the character in EVERY illustration for consistency.
    - Language preference (select: English, Deutsch, Both)
 
    Step 2 — FamilyStep.tsx: "Who's in the family?"
@@ -522,12 +612,11 @@ DO THE FOLLOWING IN ORDER:
    - Pre-populate with Papa and one sibling if data exists
 
    Step 3 — StorySelectStep.tsx: "Choose a story"
-   - Grid of available story templates (load from /data/templates/)
-   - Each card: illustration placeholder, title, short description, recommended age
+   - Grid of 6 available "first experiences" story templates (load from /data/templates/)
+   - Each card: illustration placeholder, title (German + English), short description,
+     recommended age, theme icon
    - Selected state: highlighted border
-   - If only 1 template exists, auto-select it but still show it
-   - Templates with "status": "skeleton" should show a "Coming Soon" badge
-     and be non-selectable (grayed out)
+   - All 6 templates are fully selectable
 
    Step 4 — CustomizeStep.tsx: "Make it yours"
    - Story-specific fields (loaded from template metadata):
@@ -570,11 +659,13 @@ DO THE FOLLOWING IN ORDER:
 ACCEPTANCE CRITERIA:
 - [ ] Full wizard flow works: profile → family → story → customize → generate
 - [ ] Photo upload shows preview
-- [ ] Template grid loads from /data/templates/
+- [ ] Template grid loads all 6 templates from /data/templates/
 - [ ] Generation progress shows realistic steps
 - [ ] Completed book opens in the reader
 - [ ] Form validation prevents empty required fields
 - [ ] Mobile responsive (usable at 375px)
+- [ ] Outfit selector shows predefined options with visual preview
+- [ ] Selected outfit is included in StoryConfig sent to API
 
 DESIGN: Same warm, cozy feel as the reader. Step indicator at top
 with numbered circles. Soft transitions between steps.
@@ -600,17 +691,21 @@ DO THE FOLLOWING IN ORDER:
 
 3. Implement /lib/services/pdf-export.ts:
 
-   exportScreenPDF(book: Book): Promise<Buffer>
+   exportScreenPDF(book: Book, watermark?: boolean): Promise<Buffer>
    - A5 landscape (210x148mm) at 150 DPI
    - Page 1: cover page (full illustration + title + child name)
    - Pages 2-23: illustration top half, text bottom half
    - Page 24: back cover ("A bedtime-ahana book, made for {name}")
    - Font: embedded (use Helvetica built-in for now)
    - Text: dark gray, 14pt, centered in text area
+   - If watermark=true (free tier users): add subtle diagonal watermark
+     "bedtime-ahana.com" in light gray across each page
+     (should not obscure text/illustrations significantly)
 
-   exportPrintPDF(book: Book): Promise<Buffer>
-   - 100x100mm (Pixi format) at 300 DPI
-   - 3mm bleed on all sides (total: 106x106mm per page)
+   exportPrintPDF(book: Book, format: '10x10' | '15x15'): Promise<Buffer>
+   - 10x10cm: 100x100mm + 3mm bleed = 106x106mm per page, 300 DPI
+   - 15x15cm: 150x150mm + 3mm bleed = 156x156mm per page, 300 DPI
+   - Layout logic shared between formats, only dimensions change
    - Full-bleed illustrations (image fills entire page including bleed)
    - Text overlaid on illustration (white semi-transparent box, same as reader)
    - Color space: RGB for now (note: CMYK conversion needed for production —
@@ -626,9 +721,10 @@ DO THE FOLLOWING IN ORDER:
 
 5. Add export buttons to the reader:
    - "Download PDF" button in reader header
-   - Dropdown: "Screen Quality (A5)" and "Print Quality (10x10cm)"
+   - Dropdown: "Screen Quality (A5)", "Print 10x10cm", "Print 15x15cm"
    - Shows loading spinner while generating
    - Triggers browser download on complete
+   - For free tier users: screen PDF includes watermark (check user subscription)
 
 6. Implement /lib/services/print-order.ts (STUB):
    - createOrder(bookId, format, address): returns mock order ID
@@ -647,10 +743,13 @@ DO THE FOLLOWING IN ORDER:
 
 ACCEPTANCE CRITERIA:
 - [ ] Screen PDF downloads from reader and opens in any PDF viewer
-- [ ] Print PDF has correct 100x100mm dimensions (verify in PDF metadata)
+- [ ] Print PDF 10x10 has correct 100x100mm dimensions (verify in PDF metadata)
+- [ ] Print PDF 15x15 has correct 150x150mm dimensions
 - [ ] Both PDFs contain all 24 pages with text and image references
-- [ ] Export buttons in reader work and trigger download
+- [ ] Export buttons in reader work and trigger download (3 options)
 - [ ] Print order stub returns mock order data
+- [ ] Free tier PDFs include watermark overlay
+- [ ] Paid tier PDFs have no watermark
 - [ ] No real external API calls — everything works offline
 
 NOTE: If pdfkit gives trouble with image embedding from local files,
