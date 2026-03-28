@@ -43,3 +43,17 @@
 **Context:** The `generateAllPageTexts` function could generate all 24 pages in parallel or sequentially.
 **Decision:** Used sequential generation (for-loop) instead of `Promise.all`.
 **Rationale:** In live mode, parallel calls to Claude would hit rate limits. Sequential is safer and allows context from earlier pages to inform later ones. In stub mode, the overhead is negligible.
+
+---
+
+# Session 3
+
+## Decision 9: asset-storage with swappable backend
+**Context:** The project needs file storage for character sheets and page images, with future S3/R2 migration path.
+**Decision:** Created `lib/services/asset-storage.ts` with a `StorageBackend` interface (save/load/exists/delete/getUrl). Default is filesystem backend writing to `public/generated/`. Backend is swappable via `setStorageBackend()`.
+**Rationale:** Tests can inject an in-memory backend. Production can swap to S3/R2 without changing any consumer code.
+
+## Decision 10: SVG character sheet poses
+**Context:** Character sheet needs 6 canonical poses for stub mode.
+**Decision:** Generated simple SVG illustrations with a deterministic hash-based color system (hair/outfit derived from child name + color). Poses: front, 3/4 left, 3/4 right, walking, sitting, with companion.
+**Rationale:** Visual stubs that are unique per child (different colors) and show the companion object, giving a realistic preview of what the live system would produce.

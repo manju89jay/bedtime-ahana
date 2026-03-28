@@ -33,14 +33,14 @@
 - [x] Stub mode generates complete 24-page bilingual book JSON with audioUrls
 
 ## SESSION 3: Character Sheet & Image Generation (Stub Mode)
-- [ ] Implement /lib/ai/face-detect.ts (stub)
-- [ ] Implement /lib/ai/character-sheet.ts (stub, 6 SVG poses)
-- [ ] Implement /lib/ai/image-gen.ts (stub, SVG placeholders)
-- [ ] Implement /lib/services/storage.ts (filesystem, S3-swappable interface)
-- [ ] Wire API route: POST /api/character
-- [ ] Update book-service to generate images via image-gen
-- [ ] Write tests: face detection, character sheet, image gen, storage, full pipeline
-- [ ] Full book generation produces 24 page images on disk
+- [x] Implement /lib/ai/face-detect.ts (stub)
+- [x] Implement /lib/ai/character-sheet.ts (stub, 6 SVG poses)
+- [x] Implement /lib/ai/image-gen.ts (stub, SVG placeholders)
+- [x] Implement /lib/services/asset-storage.ts (filesystem, S3-swappable interface)
+- [x] Wire API route: POST /api/character
+- [x] Update book-service to generate images via image-gen
+- [x] Write tests: face detection, character sheet, image gen, storage, full pipeline
+- [x] Full book generation produces 24 page images on disk
 
 ## SESSION 4: Interactive Book Reader
 - [ ] Build PageView.tsx (square 1:1, full-bleed illustration, zoom on tap)

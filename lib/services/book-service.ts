@@ -3,9 +3,10 @@ import { generateAllPageTexts } from '@/lib/ai/page-text';
 import { generateAllImagePrompts } from '@/lib/ai/image-prompt';
 import { checkCompliance } from '@/lib/ai/compliance-check';
 import { generateAllTts } from '@/lib/ai/tts';
+import { generateAllImages } from '@/lib/ai/image-gen';
 import { createBookId } from '@/lib/id';
 import type { Book, Page, ComplianceResult } from '@/types/book';
-import type { StoryConfig, Beat } from '@/types/template';
+import type { StoryConfig } from '@/types/template';
 
 export type BookGenerationResult = {
   book: Book;
@@ -50,7 +51,20 @@ export async function generateBook(
   // Step 5: Compliance check
   const complianceCheck = checkCompliance(pages, config);
 
-  // Step 6: Generate TTS audio URLs
+  // Step 6: Generate images via image-gen
+  const imageResults = await generateAllImages(
+    pages.map((p) => ({ pageNumber: p.pageNumber, imagePrompt: p.imagePrompt })),
+    bookId,
+    config.characterRefId
+  );
+  for (const img of imageResults) {
+    const page = pages.find((p) => p.pageNumber === img.pageNumber);
+    if (page) {
+      page.imageUrl = img.imageUrl;
+    }
+  }
+
+  // Step 7: Generate TTS audio URLs
   const ttsResults = await generateAllTts(
     pages.map((p) => ({ pageNumber: p.pageNumber, text: p.text })),
     config.language,
