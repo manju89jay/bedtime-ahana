@@ -31,7 +31,7 @@ USE_STUBS=true
 NEXTAUTH_SECRET=any-random-string-here
 NEXTAUTH_URL=http://localhost:3000
 
-# --- LIVE MODE (real DALL-E illustrations, ~$1 per book) ---
+# --- LIVE MODE (real GPT Image illustrations, ~$1 per book) ---
 # USE_STUBS=false
 # OPENAI_API_KEY=sk-your-key-here
 # NEXTAUTH_SECRET=any-random-string-here
@@ -107,7 +107,7 @@ You'll see:
 **Step 5: Generate**
 - Progress bar shows 5 steps
 - In **stub mode**: completes in ~2 seconds
-- In **live mode** (DALL-E): takes 2-5 minutes (24 images generated)
+- In **live mode** (GPT Image): takes 2-5 minutes (24 images generated)
 - On completion, redirects to the reader
 
 ### 5. Reader — `http://localhost:3000/reader/{bookId}`
@@ -140,7 +140,7 @@ A legacy 6-page sample book (built during `pnpm build`) is always available.
 
 | Element | Appearance |
 |---------|------------|
-| Page illustrations | **Real DALL-E 3 watercolor-style children's book illustrations** |
+| Page illustrations | **Real GPT Image 3 watercolor-style children's book illustrations** |
 | Character sheet | Still geometric SVGs (IP-Adapter not yet integrated) |
 | Page text | Still template-based (Claude API not connected for text) |
 | Audio | Still placeholder URLs |
@@ -150,7 +150,7 @@ A legacy 6-page sample book (built during `pnpm build`) is always available.
 
 | Action | Cost |
 |--------|------|
-| 1 page illustration (DALL-E 3, 1024x1024, standard) | ~$0.04 |
+| 1 page illustration (GPT Image 3, 1024x1024, standard) | ~$0.04 |
 | Full 24-page book | ~$0.96 |
 | 10 books for testing | ~$9.60 |
 
@@ -182,5 +182,5 @@ pnpm build    # Next.js production build
 | Redirected to /login on every page | You need to register/login first, or the middleware is active |
 | "OPENAI_API_KEY is required" | Set `USE_STUBS=true` in `.env.local` or add your API key |
 | Images show "Page N" placeholders | You're in stub mode — set `USE_STUBS=false` + add API key for real images |
-| Book generation takes forever | Live mode generates 24 DALL-E images sequentially (~5-10s each) |
+| Book generation takes forever | Live mode generates 24 GPT Image images sequentially (~5-10s each) |
 | Reader shows "not found" | The book JSON must exist in `data/books/{bookId}.json` |

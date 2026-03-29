@@ -1,4 +1,4 @@
-import { getOpenAIClient } from './imageClient';
+import { getOpenAIClient, getImageModel } from './imageClient';
 import { saveAsset } from '@/lib/services/asset-storage';
 
 export type ImageGenInput = {
@@ -52,7 +52,8 @@ async function generateImageStub(input: ImageGenInput): Promise<ImageGenOutput> 
   return { imageUrl: url, pageNumber: input.pageNumber };
 }
 
-async function generateImageViaDALLE(input: ImageGenInput): Promise<ImageGenOutput> {
+async function generateImageLive(input: ImageGenInput): Promise<ImageGenOutput> {
+  const model = getImageModel();
   try {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -63,30 +64,40 @@ async function generateImageViaDALLE(input: ImageGenInput): Promise<ImageGenOutp
     const client = getOpenAIClient();
     const cleanPrompt = stripCharacterRef(input.imagePrompt);
 
-    console.log(`[image-gen] Generating DALL-E image for page ${input.pageNumber}...`);
+    console.log(`[image-gen] Generating image for page ${input.pageNumber} (model: ${model})...`);
     const response = await client.images.generate({
-      model: 'dall-e-3',
+      model,
       prompt: cleanPrompt,
       n: 1,
       size: '1024x1024',
-      quality: 'standard',
+      quality: 'low',
+      output_format: 'png',
     });
 
-    const remoteUrl = response.data?.[0]?.url;
-    if (!remoteUrl) {
-      throw new Error('No image URL in DALL-E response');
+    const b64 = response.data?.[0]?.b64_json;
+    if (!b64) {
+      throw new Error('No image data in GPT Image response');
     }
 
-    console.log(`[image-gen] Downloading image for page ${input.pageNumber}...`);
-    const imageResponse = await fetch(remoteUrl);
-    const arrayBuf = await imageResponse.arrayBuffer();
     const fileName = `${input.bookId}/p${input.pageNumber}.png`;
-    const url = await saveAsset(fileName, Buffer.from(arrayBuf));
+    const url = await saveAsset(fileName, Buffer.from(b64, 'base64'));
 
     console.log(`[image-gen] Page ${input.pageNumber} saved: ${url}`);
     return { imageUrl: url, pageNumber: input.pageNumber };
-  } catch (error) {
-    console.error(`[image-gen] DALL-E FAILED for page ${input.pageNumber}:`, error instanceof Error ? error.message : error);
+  } catch (error: unknown) {
+    const status = (error as { status?: number }).status;
+    const msg = error instanceof Error ? error.message : String(error);
+    if (status === 401) {
+      console.error(`[image-gen] AUTH ERROR page ${input.pageNumber}: Invalid API key — check OPENAI_API_KEY in .env.local`);
+    } else if (status === 403) {
+      console.error(`[image-gen] PERMISSION ERROR page ${input.pageNumber}: Key lacks image generation permissions — try a User key instead of Project key`);
+    } else if (status === 429) {
+      console.error(`[image-gen] RATE LIMIT page ${input.pageNumber}: Rate limited or no billing — check https://platform.openai.com/settings/organization/billing`);
+    } else if (status === 400) {
+      console.error(`[image-gen] BAD REQUEST page ${input.pageNumber}: ${msg}`);
+    } else {
+      console.error(`[image-gen] FAILED page ${input.pageNumber} (model: ${model}): ${msg}`);
+    }
     return generateImageStub(input);
   }
 }
@@ -97,7 +108,7 @@ export async function generateImage(
   if (isStubMode()) {
     return generateImageStub(input);
   }
-  return generateImageViaDALLE(input);
+  return generateImageLive(input);
 }
 
 export async function generateAllImages(

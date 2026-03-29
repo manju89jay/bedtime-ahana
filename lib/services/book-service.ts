@@ -60,7 +60,7 @@ export async function generateBook(
   console.log(`[book-service] Compliance: ${complianceCheck.passed ? 'PASSED' : 'FAILED'} (${complianceCheck.blockers.length} blockers, ${complianceCheck.warnings.length} warnings)`);
 
   // Step 6: Generate images via image-gen
-  console.log(`[book-service] Step 5/6: Generating ${pages.length} images (this takes a while with DALL-E)...`);
+  console.log(`[book-service] Step 5/6: Generating ${pages.length} images via GPT Image...`);
   const imageResults = await generateAllImages(
     pages.map((p) => ({ pageNumber: p.pageNumber, imagePrompt: p.imagePrompt })),
     bookId,
@@ -68,7 +68,7 @@ export async function generateBook(
   );
   const pngCount = imageResults.filter((r) => r.imageUrl.endsWith('.png')).length;
   const svgCount = imageResults.filter((r) => r.imageUrl.endsWith('.svg')).length;
-  console.log(`[book-service] Images: ${pngCount} DALL-E PNGs, ${svgCount} SVG placeholders (${Date.now() - t0}ms)`);
+  console.log(`[book-service] Images: ${pngCount} GPT Image PNGs, ${svgCount} SVG placeholders (${Date.now() - t0}ms)`);
 
   for (const img of imageResults) {
     const page = pages.find((p) => p.pageNumber === img.pageNumber);

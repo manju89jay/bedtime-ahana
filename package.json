@@ -12,6 +12,7 @@
     "coverage": "node scripts/run-coverage.mjs",
     "build:all": "bash ./scripts/build-all.sh",
     "build:all:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-all.ps1",
+    "test:openai": "tsx scripts/test-openai-key.ts",
     "compile:sample": "tsc -p scripts/tsconfig.scripts.json",
     "generate:sample": "npm run compile:sample && node scripts/run-sample-book.cjs",
     "postbuild": "npm run generate:sample"

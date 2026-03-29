@@ -59,7 +59,7 @@ cp .env.example .env.local
 |----------|----------|-------------|
 | `USE_STUBS` | No | Set to `true` for mock AI responses |
 | `ANTHROPIC_API_KEY` | For live mode | Claude API for story generation |
-| `OPENAI_API_KEY` | For live mode | DALL-E for image generation |
+| `OPENAI_API_KEY` | For live mode | GPT Image for image generation |
 | `ELEVENLABS_API_KEY` | No | TTS narration |
 | `NEXTAUTH_SECRET` | Production | JWT signing secret |
 | `GELATO_API_KEY` | No | Print-on-demand orders |
