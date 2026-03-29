@@ -57,6 +57,11 @@ export async function generateOutline(input: OutlineInput): Promise<OutlineOutpu
     return generateStubOutline(input);
   }
 
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('ANTHROPIC_API_KEY not set, using outline stub');
+    return generateStubOutline(input);
+  }
+
   const template = getTemplateById(input.templateId);
   if (!template) {
     throw new Error(`Template not found: ${input.templateId}`);

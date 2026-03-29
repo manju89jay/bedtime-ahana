@@ -44,6 +44,11 @@ export async function generatePageText(input: PageTextInput): Promise<PageTextOu
     return generateStubPageText(input);
   }
 
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('ANTHROPIC_API_KEY not set, using page text stub');
+    return generateStubPageText(input);
+  }
+
   const client = getAnthropicClient();
   const beat = input.outline.find((b) => b.page === input.pageNumber);
   if (!beat) {

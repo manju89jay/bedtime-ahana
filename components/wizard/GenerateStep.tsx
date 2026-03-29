@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 type ProgressStep = {
   label: string;
@@ -13,25 +13,35 @@ type Props = {
   onError: (error: string) => void;
 };
 
-const STEPS: ProgressStep[] = [
-  { label: 'Creating outline...', status: 'pending' },
-  { label: 'Writing page text...', status: 'pending' },
-  { label: 'Generating illustrations...', status: 'pending' },
-  { label: 'Running compliance check...', status: 'pending' },
-  { label: 'Assembling your book...', status: 'pending' },
+const STEP_LABELS = [
+  'Creating outline...',
+  'Writing page text...',
+  'Generating illustrations...',
+  'Running compliance check...',
+  'Assembling your book...',
 ];
 
 export const GenerateStep = ({ onGenerate, onComplete, onError }: Props) => {
-  const [steps, setSteps] = useState<ProgressStep[]>(STEPS);
-  const [started, setStarted] = useState(false);
+  const [steps, setSteps] = useState<ProgressStep[]>(
+    STEP_LABELS.map((label) => ({ label, status: 'pending' })),
+  );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (started) return;
-    setStarted(true);
+    if (startedRef.current) return;
+    startedRef.current = true;
 
+    // Advance progress slowly — one step every 8 seconds
+    // Real generation with DALL-E takes ~2-5 minutes
     let stepIndex = 0;
+    setSteps((prev) =>
+      prev.map((s, i) => ({ ...s, status: i === 0 ? 'active' : 'pending' })),
+    );
+    stepIndex = 1;
+
     const interval = setInterval(() => {
-      if (stepIndex < STEPS.length) {
+      if (stepIndex < STEP_LABELS.length) {
         setSteps((prev) =>
           prev.map((s, i) => ({
             ...s,
@@ -39,8 +49,10 @@ export const GenerateStep = ({ onGenerate, onComplete, onError }: Props) => {
           })),
         );
         stepIndex++;
+      } else {
+        clearInterval(interval);
       }
-    }, 400);
+    }, 8000);
 
     onGenerate()
       .then((bookId) => {
@@ -50,19 +62,24 @@ export const GenerateStep = ({ onGenerate, onComplete, onError }: Props) => {
       })
       .catch((err) => {
         clearInterval(interval);
+        const msg = err instanceof Error ? err.message : 'Generation failed';
+        setErrorMsg(msg);
         setSteps((prev) =>
           prev.map((s) => ({
             ...s,
-            status: s.status === 'active' ? 'error' : s.status === 'pending' ? 'pending' : s.status,
+            status: s.status === 'active' ? 'error' : s.status === 'done' ? 'done' : 'pending',
           })),
         );
-        onError(err instanceof Error ? err.message : 'Generation failed');
+        onError(msg);
       });
-  }, [started, onGenerate, onComplete, onError]);
+  }, [onGenerate, onComplete, onError]);
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="generate-step">
       <h3 className="text-lg font-semibold text-slate-700">Creating your book...</h3>
+      <p className="text-xs text-slate-400">
+        This may take a few minutes when generating real illustrations.
+      </p>
       <div className="flex flex-col gap-2">
         {steps.map((step, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
@@ -94,6 +111,11 @@ export const GenerateStep = ({ onGenerate, onComplete, onError }: Props) => {
           </div>
         ))}
       </div>
+      {errorMsg && (
+        <div className="mt-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" data-testid="generate-error">
+          {errorMsg}
+        </div>
+      )}
     </div>
   );
 };
