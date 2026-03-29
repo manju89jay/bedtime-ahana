@@ -55,10 +55,14 @@ export default function CreatePage() {
       ageVocabulary: customizeData.ageVocabulary,
     };
 
-    const res = await fetch('/api/generate/outline', {
+    const res = await fetch('/api/generate/book', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config, templateId: selectedTemplate }),
+      body: JSON.stringify({
+        config,
+        templateId: selectedTemplate,
+        childProfileId: 'cp-wizard',
+      }),
     });
 
     if (!res.ok) {
@@ -66,8 +70,8 @@ export default function CreatePage() {
       throw new Error(data.error || 'Generation failed');
     }
 
-    await res.json();
-    return `book-${Date.now().toString(36)}`;
+    const { bookId } = await res.json();
+    return bookId;
   }, [profileData, familyData, selectedTemplate, customizeData]);
 
   const handleComplete = useCallback(

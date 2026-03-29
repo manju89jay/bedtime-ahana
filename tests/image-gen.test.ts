@@ -90,3 +90,109 @@ describe('image generation (stub mode)', () => {
     expect(content).not.toContain('<child>');
   });
 });
+
+describe('image generation (DALL-E live mode)', () => {
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    vi.resetModules();
+    tmpDir = await fs.mkdtemp(path.join(tmpdir(), 'bedtime-dalle-'));
+    process.env = { ...originalEnv, USE_STUBS: 'false', OPENAI_API_KEY: 'test-key' };
+    vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
+    await fs.mkdir(path.join(tmpDir, 'public', 'generated'), { recursive: true });
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    process.env = originalEnv;
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('calls DALL-E API, downloads image, and saves PNG', async () => {
+    vi.doMock('@/lib/ai/imageClient', () => ({
+      getOpenAIClient: () => ({
+        images: {
+          generate: vi.fn().mockResolvedValue({
+            data: [{ url: 'https://example.com/fake-dalle.png' }],
+          }),
+        },
+      }),
+    }));
+
+    const fakeImageBuffer = new ArrayBuffer(16);
+    const mockFetch = vi.fn().mockResolvedValue({
+      arrayBuffer: () => Promise.resolve(fakeImageBuffer),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
+    const { generateImage } = await import('@/lib/ai/image-gen');
+
+    const result = await generateImage({
+      imagePrompt: 'A child in a park [character_ref:cs-1]',
+      pageNumber: 5,
+      bookId: 'book-dalle',
+      characterRefId: 'cs-1',
+    });
+
+    expect(result.imageUrl).toContain('book-dalle');
+    expect(result.imageUrl).toContain('p5.png');
+    expect(result.pageNumber).toBe(5);
+
+    const filePath = path.join(tmpDir, 'public', 'generated', 'book-dalle', 'p5.png');
+    const saved = await fs.readFile(filePath);
+    expect(saved.length).toBe(16);
+  });
+
+  it('strips character_ref tag before sending to DALL-E', async () => {
+    const mockGenerate = vi.fn().mockResolvedValue({
+      data: [{ url: 'https://example.com/img.png' }],
+    });
+    vi.doMock('@/lib/ai/imageClient', () => ({
+      getOpenAIClient: () => ({ images: { generate: mockGenerate } }),
+    }));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
+    }));
+
+    vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
+    const { generateImage } = await import('@/lib/ai/image-gen');
+
+    await generateImage({
+      imagePrompt: 'A scene [character_ref:cs-abc123] with flowers',
+      pageNumber: 1,
+      bookId: 'book-strip',
+      characterRefId: 'cs-abc123',
+    });
+
+    const sentPrompt = mockGenerate.mock.calls[0][0].prompt;
+    expect(sentPrompt).not.toContain('[character_ref');
+    expect(sentPrompt).toContain('A scene');
+    expect(sentPrompt).toContain('with flowers');
+  });
+
+  it('falls back to SVG placeholder on DALL-E error', async () => {
+    vi.doMock('@/lib/ai/imageClient', () => ({
+      getOpenAIClient: () => ({
+        images: {
+          generate: vi.fn().mockRejectedValue(new Error('API error')),
+        },
+      }),
+    }));
+
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
+    const { generateImage } = await import('@/lib/ai/image-gen');
+
+    const result = await generateImage({
+      imagePrompt: 'Fallback test',
+      pageNumber: 2,
+      bookId: 'book-fallback',
+      characterRefId: 'cs-1',
+    });
+
+    expect(result.imageUrl).toContain('p2.svg');
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+});

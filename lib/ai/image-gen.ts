@@ -1,3 +1,4 @@
+import { getOpenAIClient } from './imageClient';
 import { saveAsset } from '@/lib/services/asset-storage';
 
 export type ImageGenInput = {
@@ -13,6 +14,10 @@ export type ImageGenOutput = {
 };
 
 const isStubMode = () => process.env.USE_STUBS === 'true';
+
+function stripCharacterRef(prompt: string): string {
+  return prompt.replace(/\[character_ref:[^\]]*\]/g, '').trim();
+}
 
 function buildPlaceholderSvg(prompt: string, pageNumber: number): string {
   const escapedPrompt = prompt
@@ -47,16 +52,43 @@ async function generateImageStub(input: ImageGenInput): Promise<ImageGenOutput> 
   return { imageUrl: url, pageNumber: input.pageNumber };
 }
 
+async function generateImageViaDALLE(input: ImageGenInput): Promise<ImageGenOutput> {
+  try {
+    const client = getOpenAIClient();
+    const cleanPrompt = stripCharacterRef(input.imagePrompt);
+
+    const response = await client.images.generate({
+      model: 'dall-e-3',
+      prompt: cleanPrompt,
+      n: 1,
+      size: '1024x1024',
+      quality: 'standard',
+    });
+
+    const remoteUrl = response.data?.[0]?.url;
+    if (!remoteUrl) {
+      throw new Error('No image URL in DALL-E response');
+    }
+
+    const imageResponse = await fetch(remoteUrl);
+    const arrayBuf = await imageResponse.arrayBuffer();
+    const fileName = `${input.bookId}/p${input.pageNumber}.png`;
+    const url = await saveAsset(fileName, Buffer.from(arrayBuf));
+
+    return { imageUrl: url, pageNumber: input.pageNumber };
+  } catch (error) {
+    console.warn(`DALL-E generation failed for page ${input.pageNumber}, using placeholder:`, error);
+    return generateImageStub(input);
+  }
+}
+
 export async function generateImage(
   input: ImageGenInput
 ): Promise<ImageGenOutput> {
   if (isStubMode()) {
     return generateImageStub(input);
   }
-
-  // Live mode: SDXL + IP-Adapter / Flux / DALL-E 3
-  // For now, return stub
-  return generateImageStub(input);
+  return generateImageViaDALLE(input);
 }
 
 export async function generateAllImages(
