@@ -11,13 +11,19 @@ type BookshelfProps = {
 export const Bookshelf = ({ books }: BookshelfProps) => {
   if (books.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 py-16" data-testid="bookshelf-empty">
-        <p className="text-lg text-slate-400">No books yet</p>
+      <div className="flex flex-col items-center gap-5 rounded-3xl bg-white px-8 py-16 ring-1 ring-warm-200/60" data-testid="bookshelf-empty">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-primary/10">
+          <span className="text-2xl">&#x1F4D6;</span>
+        </div>
+        <div className="text-center">
+          <p className="font-serif text-lg font-semibold text-warm-700">Your library is empty</p>
+          <p className="mt-1 text-sm text-warm-400">Create your first personalized story</p>
+        </div>
         <Link
           href="/create"
-          className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white no-underline shadow-sm hover:bg-brand-primary/90"
+          className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white no-underline shadow-sm hover:bg-brand-primary/90 hover:shadow-md"
         >
-          Create your first book
+          Create Your First Story
         </Link>
       </div>
     );
@@ -25,14 +31,14 @@ export const Bookshelf = ({ books }: BookshelfProps) => {
 
   return (
     <div
-      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
       data-testid="bookshelf"
     >
       {books.map((book) => (
         <Link
           key={book.id}
           href={`/reader/${book.id}`}
-          className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white no-underline shadow-sm transition-shadow hover:shadow-md"
+          className="group flex flex-col overflow-hidden rounded-2xl bg-white no-underline shadow-sm ring-1 ring-warm-200/60 transition-all hover:shadow-md"
           data-testid={`book-card-${book.id}`}
         >
           {/* Cover image: use first page or gradient */}
@@ -40,28 +46,28 @@ export const Bookshelf = ({ books }: BookshelfProps) => {
             <img
               src={book.pages[0].imageUrl}
               alt={`Cover of ${book.config.childName}'s book`}
-              className="h-40 w-full object-cover"
+              className="h-44 w-full object-cover"
             />
           ) : (
             <div
               className={clsx(
-                'flex h-40 items-center justify-center',
-                'bg-gradient-to-br from-brand-primary to-brand-secondary',
+                'flex h-44 items-center justify-center',
+                'bg-gradient-to-br from-brand-primary to-brand-accent/40',
               )}
             >
-              <span className="text-3xl text-white/80">&#x1F4D6;</span>
+              <span className="text-4xl text-white/70">&#x1F4D6;</span>
             </div>
           )}
 
-          <div className="flex flex-1 flex-col gap-1 p-4">
-            <p className="font-medium text-slate-800 group-hover:text-brand-primary">
+          <div className="flex flex-1 flex-col gap-1.5 p-5">
+            <p className="font-serif font-semibold text-warm-800 group-hover:text-brand-primary">
               {book.config.childName}&apos;s Adventure
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-warm-500">
               {book.templateId} &middot; {book.pages.length} pages &middot;{' '}
               {book.language === 'bilingual' ? 'EN/DE' : book.language.toUpperCase()}
             </p>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-warm-400">
               {new Date(book.createdAt).toLocaleDateString()}
             </p>
           </div>

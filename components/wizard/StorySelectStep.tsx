@@ -33,14 +33,14 @@ export const StorySelectStep = ({ templates, selected, onSelect, onNext, onBack 
               'flex flex-col gap-2 rounded-xl border-2 p-4 text-left transition-all',
               selected === t.templateId
                 ? 'border-brand-primary bg-brand-primary/5 shadow-md'
-                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm',
+                : 'border-warm-200 bg-white hover:border-warm-300 hover:shadow-sm',
             )}
             data-testid={`template-${t.templateId}`}
           >
             <span className="text-2xl">{THEME_ICONS[t.templateId] ?? '\u{1F4D6}'}</span>
-            <span className="font-semibold text-slate-800">{t.title}</span>
-            <span className="text-xs text-slate-500">{t.theme}</span>
-            <span className="text-xs italic text-slate-400">{t.moral}</span>
+            <span className="font-semibold text-warm-800">{t.title}</span>
+            <span className="text-xs text-warm-500">{t.theme}</span>
+            <span className="text-xs italic text-warm-400">{t.moral}</span>
           </button>
         ))}
       </div>
@@ -49,7 +49,7 @@ export const StorySelectStep = ({ templates, selected, onSelect, onNext, onBack 
         <button
           type="button"
           onClick={onBack}
-          className="rounded-lg border border-slate-200 px-6 py-2.5 text-sm text-slate-600 hover:bg-slate-50"
+          className="rounded-full border border-warm-200 px-6 py-2.5 text-sm text-warm-600 hover:bg-warm-50"
           data-testid="back-button"
         >
           Back
@@ -58,7 +58,7 @@ export const StorySelectStep = ({ templates, selected, onSelect, onNext, onBack 
           type="button"
           onClick={onNext}
           disabled={!selected}
-          className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
+          className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
           data-testid="next-button"
         >
           Next

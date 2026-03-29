@@ -21,7 +21,7 @@ import DashboardPage from '@/app/dashboard/page';
 describe('Dashboard page', () => {
   it('renders dashboard title', () => {
     render(<DashboardPage />);
-    expect(screen.getByTestId('dashboard-title').textContent).toContain('Dashboard');
+    expect(screen.getByTestId('dashboard-title').textContent).toContain('Library');
   });
 
   it('shows subscription tier', () => {
@@ -34,7 +34,7 @@ describe('Dashboard page', () => {
     render(<DashboardPage />);
     const btn = screen.getByTestId('create-button');
     expect(btn.getAttribute('href')).toBe('/create');
-    expect(btn.textContent).toContain('Create New Book');
+    expect(btn.textContent).toContain('Create New Story');
   });
 
   it('shows empty bookshelf', () => {

@@ -65,18 +65,18 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" data-testid="family-step">
       <div className="space-y-3">
-        <label className="text-sm font-medium text-slate-700">Family Members *</label>
+        <label className="text-sm font-medium text-warm-700">Family Members *</label>
         {members.map((m, i) => (
           <div key={i} className="flex gap-2" data-testid={`family-member-${i}`}>
             <input
-              className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+              className="flex-1 rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
               placeholder="Name"
               value={m.name}
               onChange={(e) => updateMember(i, 'name', e.target.value)}
               data-testid={`member-name-${i}`}
             />
             <select
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
               value={m.role}
               onChange={(e) => updateMember(i, 'role', e.target.value)}
               data-testid={`member-role-${i}`}
@@ -89,7 +89,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
               <button
                 type="button"
                 onClick={() => removeMember(i)}
-                className="rounded-lg px-2 text-slate-400 hover:text-red-500"
+                className="rounded-lg px-2 text-warm-400 hover:text-red-500"
                 data-testid={`remove-member-${i}`}
               >
                 &times;
@@ -109,7 +109,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
 
       {/* Pet */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Pet</label>
+        <label className="text-sm font-medium text-warm-700">Pet</label>
         <div className="flex gap-2" data-testid="pet-type-selector">
           {PET_TYPES.map((p) => (
             <button
@@ -118,7 +118,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
               onClick={() => setPetType(p.value)}
               className={clsx(
                 'rounded-lg px-3 py-1.5 text-sm transition-colors',
-                petType === p.value ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                petType === p.value ? 'bg-brand-primary text-white' : 'bg-warm-100 text-warm-600 hover:bg-warm-200',
               )}
             >
               {p.label}
@@ -127,7 +127,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
         </div>
         {petType !== 'none' && (
           <input
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+            className="w-full rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
             placeholder="Pet name"
             value={petName}
             onChange={(e) => setPetName(e.target.value)}
@@ -140,7 +140,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
         <button
           type="button"
           onClick={onBack}
-          className="rounded-lg border border-slate-200 px-6 py-2.5 text-sm text-slate-600 hover:bg-slate-50"
+          className="rounded-full border border-warm-200 px-6 py-2.5 text-sm text-warm-600 hover:bg-warm-50"
           data-testid="back-button"
         >
           Back
@@ -148,7 +148,7 @@ export const FamilyStep = ({ initial, onNext, onBack }: Props) => {
         <button
           type="submit"
           disabled={!canProceed}
-          className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
+          className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
           data-testid="next-button"
         >
           Next

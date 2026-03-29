@@ -66,7 +66,7 @@ describe('Bookshelf', () => {
   it('shows empty state when no books', () => {
     render(<Bookshelf books={[]} />);
     expect(screen.getByTestId('bookshelf-empty')).toBeDefined();
-    expect(screen.getByTestId('bookshelf-empty').textContent).toContain('No books yet');
+    expect(screen.getByTestId('bookshelf-empty').textContent).toContain('library is empty');
   });
 
   it('shows create link in empty state', () => {

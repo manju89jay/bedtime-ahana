@@ -22,15 +22,15 @@ describe('Landing page sections', () => {
   it('renders hero section', () => {
     render(<LandingPage />);
     expect(screen.getByTestId('hero')).toBeDefined();
-    expect(screen.getByTestId('hero').textContent).toContain('personalized book series');
+    expect(screen.getByTestId('hero').textContent).toContain('starring your child');
   });
 
   it('renders how-it-works section', () => {
     render(<LandingPage />);
     expect(screen.getByTestId('how-it-works')).toBeDefined();
-    expect(screen.getByTestId('how-it-works').textContent).toContain('Create a Profile');
-    expect(screen.getByTestId('how-it-works').textContent).toContain('Pick a Story');
-    expect(screen.getByTestId('how-it-works').textContent).toContain('Read or Print');
+    expect(screen.getByTestId('how-it-works').textContent).toContain('Tell us about your child');
+    expect(screen.getByTestId('how-it-works').textContent).toContain('Choose an adventure');
+    expect(screen.getByTestId('how-it-works').textContent).toContain('Read, share, or print');
   });
 
   it('renders sample spread', () => {

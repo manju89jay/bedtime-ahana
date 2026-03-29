@@ -60,17 +60,17 @@ export default function RegisterPage() {
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-6 py-12" data-testid="register-page">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-slate-800">Create an account</h1>
-        <p className="mt-1 text-sm text-slate-500">Start creating personalized books</p>
+        <h1 className="font-serif text-2xl font-bold text-warm-800">Start creating stories</h1>
+        <p className="mt-1 text-sm text-warm-500">Your first personalized book is free</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-xl bg-white p-6 shadow-sm">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-warm-200/60">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700" htmlFor="reg-email">Email</label>
+          <label className="text-sm font-medium text-warm-700" htmlFor="reg-email">Email</label>
           <input
             id="reg-email"
             type="email"
-            className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -78,11 +78,11 @@ export default function RegisterPage() {
           />
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700" htmlFor="reg-password">Password</label>
+          <label className="text-sm font-medium text-warm-700" htmlFor="reg-password">Password</label>
           <input
             id="reg-password"
             type="password"
-            className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -90,11 +90,11 @@ export default function RegisterPage() {
           />
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700" htmlFor="reg-confirm">Confirm Password</label>
+          <label className="text-sm font-medium text-warm-700" htmlFor="reg-confirm">Confirm Password</label>
           <input
             id="reg-confirm"
             type="password"
-            className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
@@ -107,14 +107,14 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
+          className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90 disabled:opacity-50"
           data-testid="register-button"
         >
-          {loading ? 'Creating account...' : 'Create Account'}
+          {loading ? 'Creating account...' : 'Create Free Account'}
         </button>
       </form>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-warm-500">
         Already have an account?{' '}
         <Link href="/login" className="text-brand-primary hover:underline" data-testid="login-link">
           Sign in

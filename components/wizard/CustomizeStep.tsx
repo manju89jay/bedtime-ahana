@@ -58,7 +58,7 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" data-testid="customize-step">
       {/* Tone */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Story Tone</label>
+        <label className="text-sm font-medium text-warm-700">Story Tone</label>
         <div className="grid gap-2 sm:grid-cols-3" data-testid="tone-selector">
           {TONES.map((t) => (
             <button
@@ -67,12 +67,12 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
               onClick={() => setTone(t.value)}
               className={clsx(
                 'flex flex-col rounded-xl border-2 p-3 text-left transition-all',
-                tone === t.value ? 'border-brand-primary bg-brand-primary/5' : 'border-slate-200 hover:border-slate-300',
+                tone === t.value ? 'border-brand-primary bg-brand-primary/5' : 'border-warm-200 hover:border-warm-300',
               )}
               data-testid={`tone-${t.value}`}
             >
-              <span className="text-sm font-medium text-slate-800">{t.label}</span>
-              <span className="text-xs text-slate-400">{t.desc}</span>
+              <span className="text-sm font-medium text-warm-800">{t.label}</span>
+              <span className="text-xs text-warm-400">{t.desc}</span>
             </button>
           ))}
         </div>
@@ -80,7 +80,7 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
 
       {/* Vocabulary */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Vocabulary Level</label>
+        <label className="text-sm font-medium text-warm-700">Vocabulary Level</label>
         <div className="grid gap-2 sm:grid-cols-3" data-testid="vocab-selector">
           {VOCAB_LEVELS.map((v) => (
             <button
@@ -89,12 +89,12 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
               onClick={() => setVocab(v.value)}
               className={clsx(
                 'flex flex-col rounded-xl border-2 p-3 text-left transition-all',
-                vocab === v.value ? 'border-brand-primary bg-brand-primary/5' : 'border-slate-200 hover:border-slate-300',
+                vocab === v.value ? 'border-brand-primary bg-brand-primary/5' : 'border-warm-200 hover:border-warm-300',
               )}
               data-testid={`vocab-${v.value}`}
             >
-              <span className="text-sm font-medium text-slate-800">{v.label}</span>
-              <span className="text-xs text-slate-400">{v.desc}</span>
+              <span className="text-sm font-medium text-warm-800">{v.label}</span>
+              <span className="text-xs text-warm-400">{v.desc}</span>
             </button>
           ))}
         </div>
@@ -103,10 +103,10 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
       {/* Story-specific fields */}
       {showKgField && (
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700" htmlFor="kg-name">Kindergarten Name</label>
+          <label className="text-sm font-medium text-warm-700" htmlFor="kg-name">Kindergarten Name</label>
           <input
             id="kg-name"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+            className="w-full rounded-full border border-warm-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
             placeholder="e.g. Kita Sonnenschein"
             value={kgName}
             onChange={(e) => setKgName(e.target.value)}
@@ -116,10 +116,10 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
       )}
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700" htmlFor="playground">Favorite Playground</label>
+        <label className="text-sm font-medium text-warm-700" htmlFor="playground">Favorite Playground</label>
         <input
           id="playground"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+          className="w-full rounded-full border border-warm-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
           placeholder="e.g. Friedrichsau park"
           value={playground}
           onChange={(e) => setPlayground(e.target.value)}
@@ -128,8 +128,8 @@ export const CustomizeStep = ({ childAge, templateId, initial, onNext, onBack }:
       </div>
 
       <div className="mt-2 flex justify-between">
-        <button type="button" onClick={onBack} className="rounded-lg border border-slate-200 px-6 py-2.5 text-sm text-slate-600 hover:bg-slate-50" data-testid="back-button">Back</button>
-        <button type="submit" className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90" data-testid="next-button">Generate Book</button>
+        <button type="button" onClick={onBack} className="rounded-full border border-warm-200 px-6 py-2.5 text-sm text-warm-600 hover:bg-warm-50" data-testid="back-button">Back</button>
+        <button type="submit" className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary/90" data-testid="next-button">Generate Book</button>
       </div>
     </form>
   );

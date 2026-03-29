@@ -14,11 +14,11 @@ import { Banner } from '@/components/Banner';
 type WizardStep = 'profile' | 'family' | 'story' | 'customize' | 'generate';
 
 const STEP_LABELS: { key: WizardStep; label: string }[] = [
-  { key: 'profile', label: '1. Profile' },
-  { key: 'family', label: '2. Family' },
-  { key: 'story', label: '3. Story' },
-  { key: 'customize', label: '4. Customize' },
-  { key: 'generate', label: '5. Generate' },
+  { key: 'profile', label: 'Profile' },
+  { key: 'family', label: 'Family' },
+  { key: 'story', label: 'Story' },
+  { key: 'customize', label: 'Customize' },
+  { key: 'generate', label: 'Create' },
 ];
 
 export default function CreatePage() {
@@ -89,19 +89,39 @@ export default function CreatePage() {
   return (
     <div className="flex flex-col gap-6" data-testid="create-wizard">
       {/* Step indicator */}
-      <div className="flex items-center gap-1 text-sm" data-testid="step-indicator">
+      <div className="flex items-center justify-center gap-0" data-testid="step-indicator">
         {STEP_LABELS.map((s, i) => (
-          <span key={s.key}>
-            {i > 0 && <span className="mx-1 text-slate-300">&rarr;</span>}
-            <span
-              className={clsx(
-                i === stepIndex ? 'font-semibold text-brand-primary' :
-                  i < stepIndex ? 'text-slate-500' : 'text-slate-300',
-              )}
-            >
-              {s.label}
-            </span>
-          </span>
+          <div key={s.key} className="flex items-center">
+            {i > 0 && (
+              <div className={clsx(
+                'h-px w-6 sm:w-10',
+                i <= stepIndex ? 'bg-brand-primary' : 'bg-warm-200',
+              )} />
+            )}
+            <div className="flex flex-col items-center gap-1.5">
+              <span
+                className={clsx(
+                  'flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors',
+                  i === stepIndex
+                    ? 'bg-brand-primary text-white shadow-sm'
+                    : i < stepIndex
+                      ? 'bg-brand-primary/20 text-brand-primary'
+                      : 'bg-warm-200 text-warm-400',
+                )}
+              >
+                {i < stepIndex ? '\u2713' : i + 1}
+              </span>
+              <span
+                className={clsx(
+                  'text-xs font-medium',
+                  i === stepIndex ? 'text-brand-primary' :
+                    i < stepIndex ? 'text-warm-500' : 'text-warm-300',
+                )}
+              >
+                {s.label}
+              </span>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -109,9 +129,9 @@ export default function CreatePage() {
 
       {/* Step 1: Child Profile */}
       {step === 'profile' && (
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-slate-800">Tell us about your child</h2>
-          <p className="mb-6 text-sm text-slate-500">Name, age, outfit, and language preferences.</p>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-warm-200/60 sm:p-8">
+          <h2 className="mb-1 font-serif text-lg font-semibold text-warm-800">Who is the star of this story?</h2>
+          <p className="mb-6 text-sm text-warm-500">Tell us about your child so we can make them the hero.</p>
           <ChildProfileStep
             initial={profileData ?? undefined}
             onNext={(data) => { setProfileData(data); setStep('family'); }}
@@ -121,9 +141,9 @@ export default function CreatePage() {
 
       {/* Step 2: Family */}
       {step === 'family' && (
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-slate-800">Who is in the family?</h2>
-          <p className="mb-6 text-sm text-slate-500">Add family members who appear in the story.</p>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-warm-200/60 sm:p-8">
+          <h2 className="mb-1 font-serif text-lg font-semibold text-warm-800">Who else appears in the story?</h2>
+          <p className="mb-6 text-sm text-warm-500">Add the family members and pets your child loves.</p>
           <FamilyStep
             initial={familyData ?? undefined}
             onNext={(data) => { setFamilyData(data); setStep('story'); }}
@@ -134,11 +154,11 @@ export default function CreatePage() {
 
       {/* Step 3: Story Selection */}
       {step === 'story' && (
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-slate-800">
-            Pick a story{profileData ? ` for ${profileData.name}` : ''}
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-warm-200/60 sm:p-8">
+          <h2 className="mb-1 font-serif text-lg font-semibold text-warm-800">
+            Choose an adventure{profileData ? ` for ${profileData.name}` : ''}
           </h2>
-          <p className="mb-6 text-sm text-slate-500">Choose from our first-experiences library.</p>
+          <p className="mb-6 text-sm text-warm-500">Real-life moments, made magical.</p>
           <StorySelectStep
             templates={templates}
             selected={selectedTemplate}
@@ -151,9 +171,9 @@ export default function CreatePage() {
 
       {/* Step 4: Customize */}
       {step === 'customize' && profileData && selectedTemplate && (
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-slate-800">Customize the story</h2>
-          <p className="mb-6 text-sm text-slate-500">Set the tone and vocabulary level.</p>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-warm-200/60 sm:p-8">
+          <h2 className="mb-1 font-serif text-lg font-semibold text-warm-800">Make it just right</h2>
+          <p className="mb-6 text-sm text-warm-500">Set the tone and vocabulary for {profileData.name}&apos;s story.</p>
           <CustomizeStep
             childAge={profileData.age}
             templateId={selectedTemplate}

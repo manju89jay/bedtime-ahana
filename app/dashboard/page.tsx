@@ -20,19 +20,19 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-800" data-testid="dashboard-title">
-            My Dashboard
+          <h2 className="font-serif text-xl font-bold text-warm-800" data-testid="dashboard-title">
+            My Library
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-warm-500">
             Plan: <span className="font-medium capitalize text-brand-primary" data-testid="subscription-tier">{subscription}</span>
           </p>
         </div>
         <Link
           href="/create"
-          className="rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white no-underline shadow-sm hover:bg-brand-primary/90"
+          className="rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white no-underline shadow-sm hover:bg-brand-primary/90 hover:shadow-md"
           data-testid="create-button"
         >
-          Create New Book
+          Create New Story
         </Link>
       </div>
 

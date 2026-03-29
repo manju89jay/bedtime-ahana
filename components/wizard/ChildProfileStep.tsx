@@ -78,10 +78,10 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" data-testid="child-profile-step">
       {/* Name */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700" htmlFor="cp-name">Name *</label>
+        <label className="text-sm font-medium text-warm-700" htmlFor="cp-name">Name *</label>
         <input
           id="cp-name"
-          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           placeholder="e.g. Ahana"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -92,7 +92,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Age */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700">Age</label>
+        <label className="text-sm font-medium text-warm-700">Age</label>
         <div className="flex gap-2" data-testid="age-selector">
           {AGES.map((a) => (
             <button
@@ -101,7 +101,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
               onClick={() => setAge(a)}
               className={clsx(
                 'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                age === a ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                age === a ? 'bg-brand-primary text-white' : 'bg-warm-100 text-warm-600 hover:bg-warm-200',
               )}
             >
               {a}
@@ -112,7 +112,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Gender */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700">Gender</label>
+        <label className="text-sm font-medium text-warm-700">Gender</label>
         <div className="flex gap-2" data-testid="gender-selector">
           {GENDERS.map((g) => (
             <button
@@ -121,7 +121,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
               onClick={() => setGender(g.value)}
               className={clsx(
                 'rounded-lg px-4 py-2 text-sm transition-colors',
-                gender === g.value ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                gender === g.value ? 'bg-brand-primary text-white' : 'bg-warm-100 text-warm-600 hover:bg-warm-200',
               )}
             >
               {g.label}
@@ -132,10 +132,10 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* City */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700" htmlFor="cp-city">City *</label>
+        <label className="text-sm font-medium text-warm-700" htmlFor="cp-city">City *</label>
         <input
           id="cp-city"
-          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           placeholder="e.g. Ulm"
           value={city}
           onChange={(e) => setCity(e.target.value)}
@@ -146,10 +146,10 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Companion */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700" htmlFor="cp-companion">Companion Object</label>
+        <label className="text-sm font-medium text-warm-700" htmlFor="cp-companion">Companion Object</label>
         <input
           id="cp-companion"
-          className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          className="w-full rounded-lg border border-warm-200 px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           placeholder="e.g. plush bunny named Hoppel"
           value={companion}
           onChange={(e) => setCompanion(e.target.value)}
@@ -159,7 +159,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Language */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700">Language</label>
+        <label className="text-sm font-medium text-warm-700">Language</label>
         <div className="flex gap-2" data-testid="language-selector">
           {LANGUAGES.map((l) => (
             <button
@@ -168,7 +168,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
               onClick={() => setLanguage(l.value)}
               className={clsx(
                 'rounded-lg px-4 py-2 text-sm transition-colors',
-                language === l.value ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                language === l.value ? 'bg-brand-primary text-white' : 'bg-warm-100 text-warm-600 hover:bg-warm-200',
               )}
             >
               {l.label}
@@ -179,7 +179,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Outfit color */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700">Signature Outfit Color</label>
+        <label className="text-sm font-medium text-warm-700">Signature Outfit Color</label>
         <div className="flex gap-2" data-testid="outfit-color-selector">
           {OUTFIT_COLORS.map((c) => (
             <button
@@ -188,7 +188,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
               onClick={() => setOutfitColor(c.value)}
               className={clsx(
                 'h-8 w-8 rounded-full border-2 transition-all',
-                outfitColor === c.value ? 'border-slate-800 scale-110' : 'border-transparent',
+                outfitColor === c.value ? 'border-warm-800 scale-110' : 'border-transparent',
               )}
               style={{ backgroundColor: c.hex }}
               aria-label={c.label}
@@ -199,7 +199,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
 
       {/* Outfit top */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-700">Outfit Style</label>
+        <label className="text-sm font-medium text-warm-700">Outfit Style</label>
         <div className="flex flex-wrap gap-2" data-testid="outfit-top-selector">
           {OUTFIT_TOPS.map((t) => (
             <button
@@ -208,7 +208,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
               onClick={() => setOutfitTop(t)}
               className={clsx(
                 'rounded-lg px-3 py-1.5 text-xs transition-colors',
-                outfitTop === t ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                outfitTop === t ? 'bg-brand-primary text-white' : 'bg-warm-100 text-warm-600 hover:bg-warm-200',
               )}
             >
               {t}
@@ -220,7 +220,7 @@ export const ChildProfileStep = ({ initial, onNext }: Props) => {
       <button
         type="submit"
         disabled={errors.length > 0}
-        className="mt-2 self-end rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
+        className="mt-2 self-end rounded-full bg-brand-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
         data-testid="next-button"
       >
         Next
