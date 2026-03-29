@@ -54,9 +54,16 @@ async function generateImageStub(input: ImageGenInput): Promise<ImageGenOutput> 
 
 async function generateImageViaDALLE(input: ImageGenInput): Promise<ImageGenOutput> {
   try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      console.error('[image-gen] OPENAI_API_KEY not set, using placeholder');
+      return generateImageStub(input);
+    }
+
     const client = getOpenAIClient();
     const cleanPrompt = stripCharacterRef(input.imagePrompt);
 
+    console.log(`[image-gen] Generating DALL-E image for page ${input.pageNumber}...`);
     const response = await client.images.generate({
       model: 'dall-e-3',
       prompt: cleanPrompt,
@@ -70,14 +77,16 @@ async function generateImageViaDALLE(input: ImageGenInput): Promise<ImageGenOutp
       throw new Error('No image URL in DALL-E response');
     }
 
+    console.log(`[image-gen] Downloading image for page ${input.pageNumber}...`);
     const imageResponse = await fetch(remoteUrl);
     const arrayBuf = await imageResponse.arrayBuffer();
     const fileName = `${input.bookId}/p${input.pageNumber}.png`;
     const url = await saveAsset(fileName, Buffer.from(arrayBuf));
 
+    console.log(`[image-gen] Page ${input.pageNumber} saved: ${url}`);
     return { imageUrl: url, pageNumber: input.pageNumber };
   } catch (error) {
-    console.warn(`DALL-E generation failed for page ${input.pageNumber}, using placeholder:`, error);
+    console.error(`[image-gen] DALL-E FAILED for page ${input.pageNumber}:`, error instanceof Error ? error.message : error);
     return generateImageStub(input);
   }
 }

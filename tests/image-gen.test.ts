@@ -109,6 +109,7 @@ describe('image generation (DALL-E live mode)', () => {
   });
 
   it('calls DALL-E API, downloads image, and saves PNG', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.doMock('@/lib/ai/imageClient', () => ({
       getOpenAIClient: () => ({
         images: {
@@ -145,6 +146,7 @@ describe('image generation (DALL-E live mode)', () => {
   });
 
   it('strips character_ref tag before sending to DALL-E', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     const mockGenerate = vi.fn().mockResolvedValue({
       data: [{ url: 'https://example.com/img.png' }],
     });
@@ -180,7 +182,7 @@ describe('image generation (DALL-E live mode)', () => {
       }),
     }));
 
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
     const { generateImage } = await import('@/lib/ai/image-gen');
 
