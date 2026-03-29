@@ -49,27 +49,28 @@ export async function generatePageText(input: PageTextInput): Promise<PageTextOu
     return generateStubPageText(input);
   }
 
-  const client = getAnthropicClient();
   const beat = input.outline.find((b) => b.page === input.pageNumber);
   if (!beat) {
     throw new Error(`No beat found for page ${input.pageNumber}`);
   }
 
-  const wordRange = WORD_RANGES[input.config.ageVocabulary] ?? WORD_RANGES.preschool;
+  try {
+    const client = getAnthropicClient();
+    const wordRange = WORD_RANGES[input.config.ageVocabulary] ?? WORD_RANGES.preschool;
 
-  const contextBeats = input.outline
-    .filter((b) => Math.abs(b.page - input.pageNumber) <= 2 && b.page !== input.pageNumber)
-    .map((b) => `  Page ${b.page}: ${b.beat}`)
-    .join('\n');
+    const contextBeats = input.outline
+      .filter((b) => Math.abs(b.page - input.pageNumber) <= 2 && b.page !== input.pageNumber)
+      .map((b) => `  Page ${b.page}: ${b.beat}`)
+      .join('\n');
 
-  const languages =
-    input.config.language === 'bilingual'
-      ? 'both English ("en") and German ("de")'
-      : input.config.language === 'de'
-        ? 'German ("de") only'
-        : 'English ("en") only';
+    const languages =
+      input.config.language === 'bilingual'
+        ? 'both English ("en") and German ("de")'
+        : input.config.language === 'de'
+          ? 'German ("de") only'
+          : 'English ("en") only';
 
-  const prompt = `Write page text for a personalized children's book.
+    const prompt = `Write page text for a personalized children's book.
 
 Child: ${input.config.childName}, age ${input.config.childAge}
 Tone: ${input.config.tonePreset}
@@ -93,20 +94,29 @@ Rules:
 
 Return ONLY JSON: {"en": "...", "de": "..."} or just one key if single language.`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1024,
-    messages: [{ role: 'user', content: prompt }],
-    system: 'You are a children\'s book author. Respond with valid JSON only — no markdown, no code fences.',
-  });
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+      system: 'You are a children\'s book author. Respond with valid JSON only — no markdown, no code fences.',
+    });
 
-  const textBlock = message.content.find((b) => b.type === 'text');
-  if (!textBlock || textBlock.type !== 'text') {
-    throw new Error('No text response from Claude');
+    const textBlock = message.content.find((b) => b.type === 'text');
+    if (!textBlock || textBlock.type !== 'text') {
+      throw new Error('No text response from Claude');
+    }
+
+    const cleaned = textBlock.text
+      .replace(/^```(?:json)?\s*/m, '')
+      .replace(/\s*```\s*$/m, '')
+      .trim();
+
+    const parsed = JSON.parse(cleaned) as { en?: string; de?: string };
+    return { pageNumber: input.pageNumber, text: parsed };
+  } catch (error) {
+    console.warn(`Claude page text failed for page ${input.pageNumber}, falling back to stub:`, error);
+    return generateStubPageText(input);
   }
-
-  const parsed = JSON.parse(textBlock.text) as { en?: string; de?: string };
-  return { pageNumber: input.pageNumber, text: parsed };
 }
 
 export async function generateAllPageTexts(

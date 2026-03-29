@@ -67,13 +67,14 @@ export async function generateOutline(input: OutlineInput): Promise<OutlineOutpu
     throw new Error(`Template not found: ${input.templateId}`);
   }
 
-  const client = getAnthropicClient();
+  try {
+    const client = getAnthropicClient();
 
-  const templateBeats = template.beats
-    .map((b) => `  Page ${b.page}: ${b.beat}`)
-    .join('\n');
+    const templateBeats = template.beats
+      .map((b) => `  Page ${b.page}: ${b.beat}`)
+      .join('\n');
 
-  const prompt = `You are creating a personalized children's story outline.
+    const prompt = `You are creating a personalized children's story outline.
 
 Template: "${template.title}"
 Theme: ${template.theme}
@@ -93,22 +94,33 @@ Personalize these 24 beats for this specific child. Replace all placeholders wit
 
 Return ONLY a JSON array of 24 objects: [{"page": 1, "beat": "..."}, ...]`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: prompt }],
-    system: 'You are a children\'s book editor. Respond with valid JSON only — no markdown, no code fences.',
-  });
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }],
+      system: 'You are a children\'s book editor. Respond with valid JSON only — no markdown, no code fences.',
+    });
 
-  const textBlock = message.content.find((b) => b.type === 'text');
-  if (!textBlock || textBlock.type !== 'text') {
-    throw new Error('No text response from Claude');
+    const textBlock = message.content.find((b) => b.type === 'text');
+    if (!textBlock || textBlock.type !== 'text') {
+      throw new Error('No text response from Claude');
+    }
+
+    const cleaned = textBlock.text
+      .replace(/^```(?:json)?\s*/m, '')
+      .replace(/\s*```\s*$/m, '')
+      .trim();
+
+    const parsed = JSON.parse(cleaned) as Beat[];
+
+    if (!Array.isArray(parsed) || parsed.length !== 24) {
+      console.warn(`Claude returned ${parsed?.length ?? 0} beats, expected 24. Falling back to stub.`);
+      return generateStubOutline(input);
+    }
+
+    return { outline: parsed, templateId: input.templateId };
+  } catch (error) {
+    console.warn('Claude outline generation failed, falling back to stub:', error);
+    return generateStubOutline(input);
   }
-
-  const parsed = JSON.parse(textBlock.text) as Beat[];
-  if (!Array.isArray(parsed) || parsed.length !== 24) {
-    throw new Error('Invalid outline: expected 24 beats');
-  }
-
-  return { outline: parsed, templateId: input.templateId };
 }
