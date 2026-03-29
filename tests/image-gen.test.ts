@@ -91,12 +91,12 @@ describe('image generation (stub mode)', () => {
   });
 });
 
-describe('image generation (DALL-E live mode)', () => {
+describe('image generation (GPT Image live mode)', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
     vi.resetModules();
-    tmpDir = await fs.mkdtemp(path.join(tmpdir(), 'bedtime-dalle-'));
+    tmpDir = await fs.mkdtemp(path.join(tmpdir(), 'bedtime-gptimage-'));
     process.env = { ...originalEnv, USE_STUBS: 'false', OPENAI_API_KEY: 'test-key' };
     vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
     await fs.mkdir(path.join(tmpDir, 'public', 'generated'), { recursive: true });
@@ -108,23 +108,19 @@ describe('image generation (DALL-E live mode)', () => {
     await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
-  it('calls DALL-E API, downloads image, and saves PNG', async () => {
+  it('calls GPT Image API, decodes base64, and saves PNG', async () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
+    const fakeB64 = Buffer.from('fake-png-data-here').toString('base64');
     vi.doMock('@/lib/ai/imageClient', () => ({
       getOpenAIClient: () => ({
         images: {
           generate: vi.fn().mockResolvedValue({
-            data: [{ url: 'https://example.com/fake-dalle.png' }],
+            data: [{ b64_json: fakeB64 }],
           }),
         },
       }),
+      getImageModel: () => 'gpt-image-1.5',
     }));
-
-    const fakeImageBuffer = new ArrayBuffer(16);
-    const mockFetch = vi.fn().mockResolvedValue({
-      arrayBuffer: () => Promise.resolve(fakeImageBuffer),
-    });
-    vi.stubGlobal('fetch', mockFetch);
 
     vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
     const { generateImage } = await import('@/lib/ai/image-gen');
@@ -132,29 +128,28 @@ describe('image generation (DALL-E live mode)', () => {
     const result = await generateImage({
       imagePrompt: 'A child in a park [character_ref:cs-1]',
       pageNumber: 5,
-      bookId: 'book-dalle',
+      bookId: 'book-gptimage',
       characterRefId: 'cs-1',
     });
 
-    expect(result.imageUrl).toContain('book-dalle');
+    expect(result.imageUrl).toContain('book-gptimage');
     expect(result.imageUrl).toContain('p5.png');
     expect(result.pageNumber).toBe(5);
 
-    const filePath = path.join(tmpDir, 'public', 'generated', 'book-dalle', 'p5.png');
+    const filePath = path.join(tmpDir, 'public', 'generated', 'book-gptimage', 'p5.png');
     const saved = await fs.readFile(filePath);
-    expect(saved.length).toBe(16);
+    expect(saved.toString()).toBe('fake-png-data-here');
   });
 
-  it('strips character_ref tag before sending to DALL-E', async () => {
+  it('strips character_ref tag before sending to GPT Image', async () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
+    const fakeB64 = Buffer.from('img').toString('base64');
     const mockGenerate = vi.fn().mockResolvedValue({
-      data: [{ url: 'https://example.com/img.png' }],
+      data: [{ b64_json: fakeB64 }],
     });
     vi.doMock('@/lib/ai/imageClient', () => ({
       getOpenAIClient: () => ({ images: { generate: mockGenerate } }),
-    }));
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
+      getImageModel: () => 'gpt-image-1.5',
     }));
 
     vi.spyOn(process, 'cwd').mockReturnValue(tmpDir);
@@ -173,13 +168,14 @@ describe('image generation (DALL-E live mode)', () => {
     expect(sentPrompt).toContain('with flowers');
   });
 
-  it('falls back to SVG placeholder on DALL-E error', async () => {
+  it('falls back to SVG placeholder on GPT Image error', async () => {
     vi.doMock('@/lib/ai/imageClient', () => ({
       getOpenAIClient: () => ({
         images: {
           generate: vi.fn().mockRejectedValue(new Error('API error')),
         },
       }),
+      getImageModel: () => 'gpt-image-1.5',
     }));
 
     const warnSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -196,5 +192,14 @@ describe('image generation (DALL-E live mode)', () => {
     expect(result.imageUrl).toContain('p2.svg');
     expect(warnSpy).toHaveBeenCalled();
     warnSpy.mockRestore();
+  });
+
+  it('trims whitespace from API key', async () => {
+    vi.resetModules();
+    process.env = { ...originalEnv, USE_STUBS: 'false', OPENAI_API_KEY: '  sk-test-key  \n' };
+
+    const { getOpenAIClient } = await import('@/lib/ai/imageClient');
+    const client = getOpenAIClient();
+    expect(client).toBeDefined();
   });
 });

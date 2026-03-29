@@ -1,8 +1,8 @@
 /**
- * Quick test to verify your OpenAI API key works with DALL-E 3.
+ * Quick test to verify your OpenAI API key works with GPT Image.
  *
  * Usage:
- *   npx tsx scripts/test-openai-key.ts
+ *   pnpm tsx scripts/test-openai-key.ts
  *
  * Reads OPENAI_API_KEY from .env.local
  */
@@ -11,7 +11,8 @@ import { config } from 'dotenv';
 config({ path: '.env.local' });
 
 async function main() {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1.5';
 
   console.log('--- OpenAI API Key Test ---\n');
 
@@ -22,7 +23,8 @@ async function main() {
 
   console.log(`Key prefix: ${apiKey.slice(0, 10)}...${apiKey.slice(-4)}`);
   console.log(`Key length: ${apiKey.length} characters`);
-  console.log(`Key format: ${apiKey.startsWith('sk-proj-') ? 'Project key' : apiKey.startsWith('sk-') ? 'User key' : 'Unknown format'}\n`);
+  console.log(`Key format: ${apiKey.startsWith('sk-proj-') ? 'Project key' : apiKey.startsWith('sk-') ? 'User key' : 'Unknown format'}`);
+  console.log(`Image model: ${model}\n`);
 
   // Test 1: List models (cheapest API call possible)
   console.log('Test 1: Checking API access (list models)...');
@@ -48,8 +50,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Test 2: Check if DALL-E 3 is available
-  console.log('Test 2: Generating a tiny DALL-E 3 image (costs ~$0.04)...');
+  // Test 2: Generate a tiny GPT Image
+  console.log(`Test 2: Generating a GPT Image (model: ${model})...`);
   try {
     const res = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -58,11 +60,12 @@ async function main() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'dall-e-3',
+        model,
         prompt: 'A simple yellow star on a white background',
         n: 1,
         size: '1024x1024',
-        quality: 'standard',
+        quality: 'low',
+        output_format: 'png',
       }),
     });
 
@@ -74,7 +77,7 @@ async function main() {
         console.error('  https://platform.openai.com/settings/organization/billing');
       }
       if (res.status === 403) {
-        console.error('\nYour key does not have access to DALL-E 3.');
+        console.error('\nYour key does not have access to image generation.');
         console.error('Project keys may have restricted permissions.');
         console.error('Try creating a "User key" instead of a "Project key".');
       }
@@ -82,9 +85,17 @@ async function main() {
     }
 
     const data = await res.json();
-    console.log(`OK — Image generated: ${data.data[0].url.slice(0, 60)}...`);
+    const b64 = data.data?.[0]?.b64_json;
+    if (!b64) {
+      console.error('FAILED: No b64_json in response');
+      console.error('Response keys:', JSON.stringify(Object.keys(data.data?.[0] || {})));
+      process.exit(1);
+    }
+
+    const sizeKb = Math.round(Buffer.from(b64, 'base64').length / 1024);
+    console.log(`OK — Image generated (${sizeKb} KB)`);
     console.log('\n--- ALL TESTS PASSED ---');
-    console.log('Your key works! DALL-E 3 is ready to use.');
+    console.log(`Your key works! GPT Image (${model}) is ready to use.`);
   } catch (err) {
     console.error(`FAILED: ${err}`);
     process.exit(1);

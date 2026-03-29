@@ -6,7 +6,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 export const runtime = 'nodejs';
-export const maxDuration = 300; // 5 minutes for DALL-E generation
+export const maxDuration = 300; // 5 minutes for image generation
 
 const BookRequestSchema = z.object({
   config: StoryConfigSchema,
