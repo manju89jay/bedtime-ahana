@@ -7,9 +7,13 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-warm-50 text-warm-900 antialiased;
 }
 
 a {
   @apply text-brand-primary underline;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-lora), Georgia, serif;
 }

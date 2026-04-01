@@ -12,6 +12,7 @@
     "coverage": "node scripts/run-coverage.mjs",
     "build:all": "bash ./scripts/build-all.sh",
     "build:all:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-all.ps1",
+    "test:openai": "tsx scripts/test-openai-key.ts",
     "compile:sample": "tsc -p scripts/tsconfig.scripts.json",
     "generate:sample": "npm run compile:sample && node scripts/run-sample-book.cjs",
     "postbuild": "npm run generate:sample"
@@ -19,23 +20,34 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@headlessui/react": "^2.1.8",
+    "bcryptjs": "^3.0.3",
     "clsx": "^2.0.0",
+    "framer-motion": "^12.38.0",
     "jspdf": "^2.5.1",
     "next": "14.1.0",
+    "next-auth": "^4.24.13",
     "openai": "^6.32.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "20.11.17",
     "@types/react": "18.2.42",
     "@types/react-dom": "18.2.17",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^17.3.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.1.0",
+    "jsdom": "^29.0.1",
     "postcss": "^8.4.32",
     "prettier": "^3.1.1",
     "tailwindcss": "^3.3.5",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2"
   }

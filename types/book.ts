@@ -1,33 +1,36 @@
-export type ChildProfile = {
-  name: string;
-  age: number;
-  interests: string[];
-};
-
-export type StoryTemplate = {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  prompt: string;
-  tone: "calm" | "adventurous" | "playful";
-};
-
 export type Page = {
-  pageNo: number;
-  type: "cover" | "story" | "back";
-  text: string;
+  pageNumber: number;
+  text: { en?: string; de?: string };
   imagePrompt: string;
   imageUrl: string;
+  audioUrl?: string;
+};
+
+export type BookStatus = 'draft' | 'generating' | 'ready' | 'exported' | 'ordered';
+
+export type ComplianceResult = {
+  passed: boolean;
+  checks: {
+    noKnownIPNames: boolean;
+    noFranchiseMotifs: boolean;
+    genericExperiences: boolean;
+    ageAppropriate: boolean;
+    gdprCompliant: boolean;
+    culturalSensitivity: boolean;
+  };
+  warnings: string[];
+  blockers: string[];
 };
 
 export type Book = {
-  bookId: string;
-  childProfile: ChildProfile;
-  templateId?: string;
-  storyIdea?: string;
-  title: string;
+  id: string;
+  childProfileId: string;
+  templateId: string;
+  config: import('./template').StoryConfig;
+  status: BookStatus;
   pages: Page[];
+  language: 'en' | 'de' | 'bilingual';
+  complianceCheck: ComplianceResult;
   createdAt: string;
-  updatedAt: string;
+  generatedAt?: string;
 };
