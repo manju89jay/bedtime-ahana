@@ -6,20 +6,19 @@ import { tmpdir } from "os";
 type ImageModule = typeof import("@/lib/ai/image");
 type StorageModule = typeof import("@/lib/storage");
 
-// Mock the OpenAI client
+const fakeB64 = Buffer.from("fake-png-data").toString("base64");
+
+// Mock the OpenAI client to return base64 (GPT Image format)
 vi.mock("@/lib/ai/imageClient", () => ({
   getOpenAIClient: () => ({
     images: {
       generate: vi.fn().mockResolvedValue({
-        data: [{ url: "https://example.com/fake-image.png" }]
+        data: [{ b64_json: fakeB64 }]
       })
     }
-  })
+  }),
+  getImageModel: () => "gpt-image-1.5",
 }));
-
-// Mock global fetch for image download
-const mockFetch = vi.fn();
-vi.stubGlobal("fetch", mockFetch);
 
 describe("ai image helpers", () => {
   let tmpDir: string;
@@ -38,7 +37,6 @@ describe("ai image helpers", () => {
   beforeEach(async () => {
     tmpDir = await fs.mkdtemp(path.join(tmpdir(), "bedtime-image-"));
     await loadModules();
-    mockFetch.mockReset();
   });
 
   afterEach(async () => {
@@ -93,13 +91,7 @@ describe("ai image helpers", () => {
     expect(contents).toContain("bedtime story");
   });
 
-  it("generates real image via DALL-E and saves locally", async () => {
-    // Mock fetch to return a fake PNG buffer
-    const fakeImageBuffer = new ArrayBuffer(8);
-    mockFetch.mockResolvedValue({
-      arrayBuffer: () => Promise.resolve(fakeImageBuffer)
-    });
-
+  it("generates real image via GPT Image and saves locally", async () => {
     const result = await image.generateImage({
       pageNo: 3,
       imageDescription: "A child playing in the garden",
@@ -113,16 +105,17 @@ describe("ai image helpers", () => {
 
     const filePath = storage.getPublicAssetPath("book-real", "p3.png");
     const savedFile = await fs.readFile(filePath);
-    expect(savedFile.length).toBe(8);
+    expect(savedFile.toString()).toBe("fake-png-data");
   });
 
-  it("falls back to placeholder when DALL-E returns no URL", async () => {
+  it("falls back to placeholder when GPT Image returns no data", async () => {
     vi.doMock("@/lib/ai/imageClient", () => ({
       getOpenAIClient: () => ({
         images: {
           generate: vi.fn().mockResolvedValue({ data: [{}] })
         }
-      })
+      }),
+      getImageModel: () => "gpt-image-1.5",
     }));
     vi.resetModules();
     vi.spyOn(process, "cwd").mockReturnValue(tmpDir);
@@ -134,24 +127,23 @@ describe("ai image helpers", () => {
       imageDescription: "Empty response",
       childName: "Ahana",
       childAge: 4,
-      bookId: "book-nourl"
+      bookId: "book-nodata"
     });
-    expect(result.imageUrl).toBe("/generated/book-nourl/p2.svg");
+    expect(result.imageUrl).toBe("/generated/book-nodata/p2.svg");
     expect(warnSpy).toHaveBeenCalled();
     warnSpy.mockRestore();
   });
 
-  it("falls back to placeholder when DALL-E fails", async () => {
-    // Make the OpenAI client throw
+  it("falls back to placeholder when GPT Image fails", async () => {
     vi.doMock("@/lib/ai/imageClient", () => ({
       getOpenAIClient: () => ({
         images: {
           generate: vi.fn().mockRejectedValue(new Error("API error"))
         }
-      })
+      }),
+      getImageModel: () => "gpt-image-1.5",
     }));
 
-    // Reimport to get the new mock
     vi.resetModules();
     vi.spyOn(process, "cwd").mockReturnValue(tmpDir);
     const freshImage = await import("@/lib/ai/image");

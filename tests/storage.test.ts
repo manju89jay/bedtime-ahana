@@ -2,7 +2,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { promises as fs } from "fs";
 import path from "path";
 import { tmpdir } from "os";
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 
 type StorageModule = typeof import("@/lib/storage");
 

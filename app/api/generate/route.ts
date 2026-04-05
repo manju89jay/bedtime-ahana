@@ -4,7 +4,7 @@ import { generateImage, writePlaceholderImage, generateCoverImage } from "@/lib/
 import { saveBook, ensureBookDirs } from "@/lib/storage";
 import { createBookId } from "@/lib/id";
 import { checkBookForIPRisks } from "@/lib/compliance";
-import type { ChildProfile, Book, Page } from "@/types/book";
+import type { LegacyChildProfile as ChildProfile, LegacyBook as Book, LegacyPage as Page } from "@/types/legacy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

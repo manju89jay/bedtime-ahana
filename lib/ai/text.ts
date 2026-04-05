@@ -1,5 +1,5 @@
 import { getAnthropicClient } from "./client";
-import type { ChildProfile } from "@/types/book";
+import type { LegacyChildProfile as ChildProfile } from "@/types/legacy";
 
 type GeneratedStory = {
   title: string;

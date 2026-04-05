@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { jsPDF } from "jspdf";
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 import { checkBookForIPRisks } from "@/lib/compliance";
 import { Banner } from "@/components/Banner";
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { saveBook } from "@/lib/storage";
-import type { Book } from "@/types/book";
+import type { LegacyBook as Book } from "@/types/legacy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

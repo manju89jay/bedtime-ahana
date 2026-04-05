@@ -1,4 +1,4 @@
-import type { Page } from "@/types/book";
+import type { LegacyPage as Page } from "@/types/legacy";
 
 export function PageCard({ page }: { page: Page }) {
   return (

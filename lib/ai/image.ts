@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { getOpenAIClient } from "./imageClient";
+import { getOpenAIClient, getImageModel } from "./imageClient";
 import { getPublicAssetPath, getPublicAssetUrl } from "@/lib/storage";
 
 type ImageArgs = {
@@ -24,23 +24,22 @@ export async function generateImage(args: ImageArgs): Promise<{ prompt: string; 
 
   try {
     const client = getOpenAIClient();
+    const model = getImageModel();
     const response = await client.images.generate({
-      model: "dall-e-3",
+      model,
       prompt,
       n: 1,
       size: "1024x1024",
-      quality: "standard"
+      quality: "low",
+      output_format: "png",
     });
 
-    const imageUrlRemote = response.data?.[0]?.url;
-    if (!imageUrlRemote) {
-      throw new Error("No image URL in DALL-E response");
+    const b64 = response.data?.[0]?.b64_json;
+    if (!b64) {
+      throw new Error("No image data in GPT Image response");
     }
 
-    // Download the image and save locally
-    const imageResponse = await fetch(imageUrlRemote);
-    const arrayBuf = await imageResponse.arrayBuffer();
-    await fs.writeFile(filePath, new Uint8Array(arrayBuf));
+    await fs.writeFile(filePath, new Uint8Array(Buffer.from(b64, "base64")));
 
     const imageUrl = getPublicAssetUrl(args.bookId, fileName);
     return { prompt, imageUrl };

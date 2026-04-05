@@ -1,70 +1,33 @@
-import { NextResponse } from "next/server";
-import { regeneratePageText } from "@/lib/ai/text";
-import { generateImage, writePlaceholderImage } from "@/lib/ai/image";
-import { loadBook, saveBook } from "@/lib/storage";
-import type { ChildProfile } from "@/types/book";
+import { NextResponse } from 'next/server';
+import { PageRequestSchema } from '@/lib/validation/api';
+import { generatePageText } from '@/lib/ai/page-text';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
+  const body = await request.json();
+  const parsed = PageRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
   try {
-    const body = await request.json();
-    const { bookId, pageNo } = body as { bookId: string; pageNo: number };
-
-    const book = await loadBook(bookId);
-    if (!book) {
-      return NextResponse.json({ error: "Book not found" }, { status: 404 });
-    }
-
-    const pageIndex = book.pages.findIndex((p) => p.pageNo === pageNo);
-    if (pageIndex === -1) {
-      return NextResponse.json({ error: "Page not found" }, { status: 404 });
-    }
-
-    const currentPage = book.pages[pageIndex];
-    const storyPages = book.pages.filter((p) => p.type === "story");
-
-    // Regenerate text
-    const result = await regeneratePageText(
-      book.childProfile,
-      book.title,
-      pageNo,
-      currentPage.text,
-      storyPages.map((p) => ({ pageNo: p.pageNo, text: p.text }))
-    );
-
-    // Regenerate image
-    const hasOpenAI = !!process.env.OPENAI_API_KEY;
-    const imageFn = hasOpenAI ? generateImage : writePlaceholderImage;
-    const image = await imageFn({
-      pageNo,
-      imageDescription: result.imageDescription,
-      childName: book.childProfile.name,
-      childAge: book.childProfile.age,
-      bookId
+    const result = await generatePageText({
+      config: parsed.data.config,
+      outline: parsed.data.outline,
+      pageNumber: parsed.data.pageNumber,
     });
-
-    // Update page in book
-    book.pages[pageIndex] = {
-      ...currentPage,
-      text: result.text,
-      imagePrompt: image.prompt,
-      imageUrl: image.imageUrl
-    };
-    book.updatedAt = new Date().toISOString();
-
-    await saveBook(book);
 
     return NextResponse.json({
-      page: book.pages[pageIndex],
-      book
+      page: {
+        pageNumber: result.pageNumber,
+        text: result.text,
+        imagePrompt: `Illustration for page ${result.pageNumber}`,
+        imageUrl: '',
+      },
     });
-  } catch (error: any) {
-    console.error("Page regeneration failed:", error);
-    return NextResponse.json(
-      { error: error.message || "Page regeneration failed" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Page generation failed';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
