@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import type { StoryTemplate } from "@/types/book";
+import type { LegacyStoryTemplate as StoryTemplate } from "@/types/legacy";
 
 const ICONS: Record<string, string> = {
   moon: "\u{1F319}",

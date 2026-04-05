@@ -1,0 +1,43 @@
+{
+  "templateId": "geschwisterchen",
+  "title": "{name} bekommt ein Geschwisterchen",
+  "theme": "New baby sibling",
+  "moral": "Sharing love makes it grow — being a big helper is a superpower",
+  "pages": 24,
+  "structure": {
+    "act1_setup": [1, 2, 3, 4, 5, 6],
+    "act2_adventure": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "act3_resolution": [19, 20, 21, 22, 23, 24]
+  },
+  "beats": [
+    { "page": 1, "beat": "Title page — {name} touching {parent}'s round belly, curious and excited" },
+    { "page": 2, "beat": "{parent} tells {name} a baby is coming — {name} has lots of questions" },
+    { "page": 3, "beat": "Feeling the baby kick — {name} puts a hand on the belly, eyes wide" },
+    { "page": 4, "beat": "Helping prepare the nursery — {name} arranges a stuffed animal in the crib" },
+    { "page": 5, "beat": "Shopping for tiny clothes — {name} picks a onesie with stars on it" },
+    { "page": 6, "beat": "Drawing a welcome picture for the baby — crayons spread on the table" },
+    { "page": 7, "beat": "The big day arrives — {parent} goes to the hospital; {name} stays with family" },
+    { "page": 8, "beat": "Waiting at home — {name} is restless, clutches {companion}, looks out the window" },
+    { "page": 9, "beat": "The phone rings — the baby is here! {name} bounces with excitement" },
+    { "page": 10, "beat": "Visiting the hospital — walking down a long corridor holding a family member's hand" },
+    { "page": 11, "beat": "Meeting the baby for the first time — so tiny, wrinkly, sleeping peacefully" },
+    { "page": 12, "beat": "{name} gently touches the baby's hand — the baby grips {name}'s finger" },
+    { "page": 13, "beat": "Everyone is paying attention to the baby — {name} feels a little left out" },
+    { "page": 14, "beat": "{name} retreats to a corner with {companion}, feeling jealous and confused" },
+    { "page": 15, "beat": "{parent} notices and comes over — 'You will always be my special big kid'" },
+    { "page": 16, "beat": "{parent} asks {name} to help — fetching a diaper, singing softly to the baby" },
+    { "page": 17, "beat": "The baby stops crying when {name} sings — {name} realizes they have a special power" },
+    { "page": 18, "beat": "{name} shows the welcome drawing — {parent} puts it above the crib" },
+    { "page": 19, "beat": "Coming home from hospital — {name} holds the door open proudly" },
+    { "page": 20, "beat": "First evening together — {name} helps with bath time, splashing gently" },
+    { "page": 21, "beat": "{name} reads {companion}'s 'story' to the baby — babbles along" },
+    { "page": 22, "beat": "Family photo — everyone together on the couch, baby in the middle" },
+    { "page": 23, "beat": "{parent} tucks {name} in — 'I'm so proud of my big helper'" },
+    { "page": 24, "beat": "{name} in bed with {companion}, whispering 'Goodnight little baby,' falling asleep smiling" }
+  ],
+  "vocabulary_constraints": {
+    "toddler": "max 8 words per sentence, 3-4 sentences per page",
+    "preschool": "max 12 words per sentence, 4-5 sentences per page",
+    "early-reader": "max 15 words per sentence, 5-7 sentences per page"
+  }
+}

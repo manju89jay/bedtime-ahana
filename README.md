@@ -1,79 +1,108 @@
-# bedtime-ahana — Custom Bedtime Book POC
+# bedtime-ahana
 
-Turn a child’s name + a short prompt (or voice transcript) into a **6-page, illustrated bedtime book** with optional narration — centered on **Ahana** (lives in Ulm, Germany). This POC is **copyright-safe**: it’s inspired by everyday “first experiences” stories (slice-of-life), but does **not** copy names, characters, plots, art styles, or trade dress from existing series.
+AI-personalized children's micro-books (10x10cm, 24 pages) where YOUR child is the main character. Built with Next.js 14, TypeScript, and Tailwind CSS.
 
-> **Why this exists**  
-> Ideas are easy; shipping is hard. This repo proves the core loop end-to-end: **Create → Generate → Read → Export**. From here, we can iterate toward a real product.
+## Features
 
-## ✨ MVP Features
-- Create Book form (name(s), age, tone, language EN/DE, optional story idea, optional voice upload placeholder)
-- Generate: outline → page text (100–140 words/page) → image prompt per page (character-consistent) → optional TTS stub
-- Reader: page-by-page viewer, inline text edit, Export to PDF (A5 landscape)
-- Local storage: JSON under `/data/books/<bookId>.json`; assets under `/public/generated/<bookId>/`
-- Compliance check before export
+- **5-step creation wizard**: child profile, family, story selection (6 templates), customization, generation
+- **6 "first experiences" story templates**: kindergarten, dentist, bike riding, new sibling, swimming pool, garbage truck day
+- **Bilingual**: every story in English, German, or both
+- **Interactive reader**: page-turn animations (Framer Motion), night mode, bilingual toggle, inline text editing, audio player
+- **PDF export**: screen (A5, 150 DPI), print 10x10cm and 15x15cm (300 DPI, 3mm bleed, trim marks)
+- **Character consistency**: face detection + 6-pose character sheet generation (stub mode)
+- **Print-on-demand**: Gelato integration stub for physical book orders
+- **Auth**: NextAuth.js with email/password, JWT sessions, protected routes
+- **Payments**: Stripe integration stub with 4 subscription tiers
+- **Compliance**: 6-check rule-based system (IP names, franchise motifs, age-appropriate, GDPR, cultural sensitivity)
 
-## 🧱 Tech Stack
-Next.js 14 (App Router) + TypeScript • Tailwind • Vitest • ESLint+Prettier • `jspdf` for client PDF • Deterministic AI stubs
+## Tech Stack
 
-## 🚀 Quick Start
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 14 (App Router) + TypeScript |
+| Styling | Tailwind CSS |
+| Animations | Framer Motion |
+| State | Zustand (sessionStorage persistence) |
+| Auth | NextAuth.js (JWT) |
+| Validation | Zod |
+| PDF | jsPDF |
+| Testing | Vitest + Testing Library |
+| CI | GitHub Actions (pnpm, lint, test, build) |
+
+## Quick Start
+
 ```bash
-pnpm i
+pnpm install
 pnpm dev
 # open http://localhost:3000
-Scripts: pnpm build, pnpm start, pnpm lint, pnpm test
+```
 
-### 📘 Sample Output on Build
+## Scripts
 
-- `npm run build` (or `pnpm build`) now runs a `postbuild` step that compiles a demo story using the local generation stubs.
-- The resulting book JSON is saved to [`data/books/sample-ahana.json`](data/books/sample-ahana.json) and the exported PDF is written to [`public/generated/sample-ahana/book.pdf`](public/generated/sample-ahana/book.pdf).
-- You can run the generator manually via `npm run generate:sample` to refresh the assets, or open the reader at [/reader/sample-ahana](http://localhost:3000/reader/sample-ahana) after starting the dev server.
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start development server |
+| `pnpm build` | Production build (+ generates sample book) |
+| `pnpm test` | Run all tests |
+| `pnpm lint` | Lint with ESLint |
+| `pnpm format` | Format with Prettier |
 
-### 🛠 Build Automation
+## Environment Variables
 
-Run the project’s full build pipeline with the helper scripts in [`scripts/`](scripts/):
+Copy `.env.example` to `.env.local`:
 
-- **macOS/Linux:** `npm run build:all`
-- **Windows (PowerShell):** `npm run build:all:windows`
+```bash
+cp .env.example .env.local
+```
 
-The Windows command wraps [`scripts/build-all.ps1`](scripts/build-all.ps1), which mirrors the logic of the Bash script used on Unix-like systems.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `USE_STUBS` | No | Set to `true` for mock AI responses |
+| `ANTHROPIC_API_KEY` | For live mode | Claude API for story generation |
+| `OPENAI_API_KEY` | For live mode | GPT Image for image generation |
+| `ELEVENLABS_API_KEY` | No | TTS narration |
+| `NEXTAUTH_SECRET` | Production | JWT signing secret |
+| `GELATO_API_KEY` | No | Print-on-demand orders |
+| `STRIPE_SECRET_KEY` | No | Payment processing |
 
-🧩 Data Model
-See /types/book.ts.
+## Project Structure
 
-🔌 API (local stubs)
-POST /api/outline • POST /api/page • POST /api/image • POST /api/tts • POST /api/export
+```
+app/                    # Next.js App Router pages & API routes
+  api/                  # API endpoints (auth, character, generate, export, stripe)
+  create/               # 5-step book creation wizard
+  dashboard/            # User dashboard with bookshelf
+  login/                # Authentication
+  reader/[bookId]/      # Interactive book reader
+  register/             # User registration
+components/
+  bookshelf/            # Bookshelf grid component
+  reader/               # PageView, PageTurn, TextOverlay, AudioPlayer, BookReader, ExportDropdown
+  wizard/               # ChildProfileStep, FamilyStep, StorySelectStep, CustomizeStep, GenerateStep
+data/templates/         # 6 story template JSON files (24 beats each)
+lib/
+  ai/                   # AI adapters: outline, page-text, image-prompt, image-gen, character-sheet, face-detect, tts, compliance
+  auth/                 # NextAuth configuration
+  payments/             # Stripe stub with pricing plans
+  services/             # book-service, asset-storage, pdf-export, print-order
+  store/                # Zustand stores (book, user)
+  utils/                # i18n utility
+  validation/           # Zod schemas for all types
+types/                  # TypeScript interfaces (book, character, user, template, api, order)
+tests/                  # 297 tests across 32 test files
+```
 
-📘 Product Overview
-See [`docs/product_overview.md`](docs/product_overview.md) for a shareable, narrative summary you can pass along to teammates or friends.
+## Story Templates
 
-👧 Default Character: Ahana
-Age ~4–5 (born 19 Apr 2021), Ulm (Germany), baby sister Shreya, Papa. Traits: curious, kind, gentle helper. Sidekick: plush bunny. Visuals: soft watercolor, warm light, simple non-derivative outfits.
+| Template | Theme | Moral |
+|----------|-------|-------|
+| kindergarten-first-day | First day at Kindergarten | Courage in new situations |
+| zahnarzt | First dentist visit | Bravery, self-care |
+| fahrrad | Learning to ride a bike | Persistence, practice |
+| geschwisterchen | New baby sibling | Sharing love, being a helper |
+| schwimmbad | First swimming pool visit | Water safety, trying new things |
+| muellabfuhr | Garbage truck day | Community helpers, environment |
 
-🌱 Seed Stories
-EN: Ahana Helps With Baby Shreya — Moral: Small helpers make big differences.
-DE (outline): Ahana im Regen-Museum
+## License
 
-✅ Safety & Compliance
-We’re inspired by slice-of-life “first experiences”, but never reproduce specific expression from existing works.
-Checklist: no known IP names/phrases/outfits/pets; generic experiences only; art prompts avoid franchise-like motifs; titles/metadata are original.
-
-🌍 Localization
-Languages: EN, DE. Age-appropriate vocabulary; avoid tricky idioms.
-
-🧪 Testing
-Includes tests for storage, compliance, and outline structure.
-
-🧭 Flow
-Create → Generate → Reader → Export (PDF). Target time-to-first-book < 3 minutes.
-
-🔁 Replace Stubs With Real AI (Later)
-Swap /lib/ai/* with adapters for LLM, image gen, TTS; keep function signatures.
-
-🗺️ Roadmap
-Character reference images • Real TTS • Print-on-demand • Auth • Analytics • Pricing tests • Accessibility
-
-👥 Roles
-Me (product/backend), KCK (art/style), BJ (pricing/outreach), Lemon (ops/content/localization/privacy).
-
-📄 License
 MIT
