@@ -9,3 +9,6 @@ public/generated/
 
 coverage
 tsconfig.tsbuildinfo
+
+# Sensitive reference photos (keep locally, never commit)
+data/reference/
